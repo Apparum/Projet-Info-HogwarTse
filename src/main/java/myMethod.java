@@ -1,12 +1,21 @@
+import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.Image;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.filechooser.FileSystemView;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -25,17 +34,24 @@ public class myMethod {
 	public static void main(final String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		final Mat frame = new Mat();
-		final VideoCapture camera = new VideoCapture("metro.mp4");
+		final JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		final int returnValue = jfc.showOpenDialog(null);
+		VideoCapture camera = new VideoCapture();
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			final File selectedFile = jfc.getSelectedFile();
+			camera = new VideoCapture(selectedFile.getAbsolutePath());
+		}
 		final JFrame jframe = new JFrame("Hogwar'TSE");
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final JLabel vidpanel = new JLabel();
-		jframe.setSize(370, 330);
+		jframe.setSize(1400, 900);
 		jframe.setContentPane(vidpanel);
 		jframe.setVisible(true);
+		jframe.setResizable(false);
 
 		final HOGDescriptor hog = new HOGDescriptor();
 		// new Size(128, 64), new Size(16, 16), new Size(8, 8), new Size(8, 8),
-		// 9, 0, -1, 0, 0.2, false, 64, false
+		// 9, 0, -1, 0, 0.2, false, 64, false);
 		final MatOfFloat descriptors = HOGDescriptor.getDefaultPeopleDetector();
 		hog.setSVMDetector(descriptors);
 		final MatOfRect foundLocations = new MatOfRect();
@@ -60,10 +76,24 @@ public class myMethod {
 						Imgproc.rectangle(frame, rectPoint1, rectPoint2, rectColor, 2);
 					}
 				}
+
 				final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
-				vidpanel.setIcon(image);
+				final ImageIcon scaledImage = new ImageIcon(image.getImage().getScaledInstance(image.getIconWidth() * 3,
+						image.getIconHeight() * 3, Image.SCALE_SMOOTH));
+				/*
+				 * jframe.addMouseListener(new MouseAdapter() {
+				 *
+				 * @Override public void mouseEntered(final MouseEvent e) {
+				 * vidpanel.setIcon(image); }
+				 *
+				 * @Override public void mouseExited(final MouseEvent e) {
+				 * vidpanel.setIcon(scaledImage); } });
+				 */
+				vidpanel.setIcon(scaledImage);
 				vidpanel.repaint();
+
 			} else {
+
 				jframe.setVisible(false);
 				jframe.dispose();
 				break;

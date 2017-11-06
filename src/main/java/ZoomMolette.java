@@ -42,14 +42,13 @@ public class ZoomMolette extends JComponent implements MouseWheelListener {
 		g.dispose();
 	}
 
-	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
 		this.zoom = Math.max(0, this.zoom - (0.03f * e.getWheelRotation()));
 		this.repaint();
 	}
 
 	public static void main(final String[] args) {
-		final ZoomMolette m = new ZoomMolette(640, 480, ZoomMolette.class.getResourceAsStream("/bebe.png"));
+		final ZoomMolette m = new ZoomMolette(640, 480, ZoomMolette.class.getResourceAsStream("png.png"));
 		final JFrame f = new JFrame();
 		f.setResizable(false);
 		f.add(m);
