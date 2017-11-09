@@ -1,10 +1,17 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import Graphic.DrawRect;
+import Graphic.Rect;
 
 public class StartingScreen extends JFrame {
 
@@ -13,28 +20,31 @@ public class StartingScreen extends JFrame {
 	// Buttons
 	JButton jbutton1 = new JButton("Browse");
 
-	private static class RectDraw extends JPanel {
-		protected void paintComponent(final Graphics g) {
-			super.paintComponent(g);
-			g.drawRect(230, 80, 10, 10);
-			g.setColor(Color.RED);
-			g.fillRect(230, 80, 10, 10);
-		}
-
-		@Override
-		public Dimension getPreferredSize() {
-			return new Dimension(100, 100); // appropriate constants
-		}
-	}
-
 	public StartingScreen() {
-		// FlightInfo setbounds
-		this.jbutton1.setBounds(1080, 600, 150, 30);
-		this.jpanel.setLayout(null);
-		this.jpanel.setBackground(Color.GRAY);
-		this.jbutton1.setBackground(Color.WHITE);
+
+		List<Rect> rects = new ArrayList<>();
+
+		// background
+		rects.add(new Rect(0, 1280, 0, 720, new Color(13, 31, 45), true));
+		// content
+		rects.add(new Rect(100, 1180, 150, 520, new Color(98, 104, 104), true));
+		// title
+		rects.add(new Rect(100, 300, 45, 105, new Color(98, 104, 104), true));
+		// browserRect
+		rects.add(new Rect(100, 1030, 595, 625, new Color(89, 131, 146), false));
+		// quit
+		rects.add(new Rect(1080, 1180, 45, 105, new Color(98, 104, 104), true));
+
+		DrawRect design = new DrawRect(rects);
+
+		this.jbutton1.setBounds(1030, 595, 150, 30);
+		this.jbutton1.setBackground(new Color(89, 131, 146));
+
+		this.jpanel.setLayout(new BorderLayout());
+
 		// Adding to JFrame
 		this.jpanel.add(this.jbutton1);
+		this.jpanel.add(design);
 		this.add(this.jpanel);
 
 		// JFrame properties
