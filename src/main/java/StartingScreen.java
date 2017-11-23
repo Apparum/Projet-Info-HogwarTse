@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ public class StartingScreen extends JFrame {
 	public StartingScreen() {
 
 		List<Rect> rects = new ArrayList<>();
-
+		// JAVA FX
 		// background
 		rects.add(new Rect(0, 1280, 0, 720, new Color(13, 31, 45), true));
 		// content
@@ -31,7 +33,7 @@ public class StartingScreen extends JFrame {
 		// title
 		rects.add(new Rect(100, 300, 45, 105, new Color(98, 104, 104), true));
 		// browserRect
-		rects.add(new Rect(100, 1030, 595, 625, new Color(89, 131, 146), false));
+		rects.add(new Rect(100, 1030, 595, 624, new Color(89, 131, 146), false));
 		// quit
 		rects.add(new Rect(1080, 1180, 45, 105, new Color(98, 104, 104), true));
 

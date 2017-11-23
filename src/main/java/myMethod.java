@@ -49,22 +49,21 @@ public class myMethod {
 		jframe.setVisible(true);
 		jframe.setResizable(false);
 
-		final HOGDescriptor hog = new HOGDescriptor();
-		// new Size(128, 64), new Size(16, 16), new Size(8, 8), new Size(8, 8),
-		// 9, 0, -1, 0, 0.2, false, 64, false);
+		final HOGDescriptor hog = new HOGDescriptor(new Size(32, 64), new Size(8, 8), new Size(4, 4), new Size(4, 4), 9,
+				1, -1, 1, 0.2, true, 16, false);
 		final MatOfFloat descriptors = HOGDescriptor.getDefaultPeopleDetector();
 		hog.setSVMDetector(descriptors);
 		final MatOfRect foundLocations = new MatOfRect();
 		final MatOfDouble foundWeights = new MatOfDouble();
-		final Size winStride = new Size(8, 8);
-		final Size padding = new Size(32, 32);
+		final Size winStride = new Size(4, 4);
+		final Size padding = new Size(0, 0);
 		final Point rectPoint1 = new Point();
 		final Point rectPoint2 = new Point();
 		final Scalar rectColor = new Scalar(0, 255, 0);
 
 		while (true) {
 			if (camera.read(frame)) {
-				hog.detectMultiScale(frame, foundLocations, foundWeights, 0.0, winStride, padding, 1.05, 2.0, false);
+				hog.detectMultiScale(frame, foundLocations, foundWeights, 0, winStride, padding, 1.05, 1, false);
 				if (foundLocations.rows() > 0) {
 					final List<Rect> rectList = foundLocations.toList();
 					for (final Rect rect : rectList) {
@@ -76,7 +75,6 @@ public class myMethod {
 						Imgproc.rectangle(frame, rectPoint1, rectPoint2, rectColor, 2);
 					}
 				}
-
 				final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
 				final ImageIcon scaledImage = new ImageIcon(image.getImage().getScaledInstance(image.getIconWidth() * 3,
 						image.getIconHeight() * 3, Image.SCALE_SMOOTH));
