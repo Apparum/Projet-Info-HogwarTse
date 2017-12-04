@@ -25,25 +25,23 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import Graphic.VideoScreen;
+import java.awt.TextArea;
+
 public class StartingScreen {
 
 	private JFrame frame;
-	String path = new String("No path yet");
+	private String path = new String("No path yet");
+	boolean fileChoosed = false;
+	private boolean goToVideo;
+	private boolean setupVideoReader = false;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					StartingScreen window = new StartingScreen();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+
+	public void setVisible(boolean bool) {
+		this.frame.setVisible(bool);
 	}
 
 	/**
@@ -63,6 +61,20 @@ public class StartingScreen {
 		this.frame.setBounds(100, 100, 930, 624);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(null);
+
+		Button playButton = new Button("Play");
+		playButton.setBackground(new Color(89, 131, 146));
+		playButton.setForeground(Color.WHITE);
+		playButton.setBounds(337, 372, 200, 65);
+		this.frame.getContentPane().add(playButton);
+
+		Label contentLabel = new Label("Welcome on the Hogwar\'Tse software for human detection");
+		contentLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
+		contentLabel.setBackground(new Color(98, 104, 104));
+		contentLabel.setForeground(Color.WHITE);
+		contentLabel.setAlignment(Label.CENTER);
+		contentLabel.setBounds(50, 95, 824, 275);
+		this.frame.getContentPane().add(contentLabel);
 
 		Canvas contentRect = new Canvas();
 		contentRect.setBackground(new Color(98, 104, 104));
@@ -119,14 +131,52 @@ public class StartingScreen {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					StartingScreen.this.path = jfc.getSelectedFile().getAbsolutePath();
 					browserLabel.setText(StartingScreen.this.path);
+					StartingScreen.this.fileChoosed = true;
+					StartingScreen.this.setupVideoReader = true;
 				}
 			}
 		});
+
+		playButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (StartingScreen.this.fileChoosed == false) {
+					// WARNING NEED TO CHOOSE A FILE FIRST
+					System.out.println("no file");
+				} else {
+					StartingScreen.this.setGoToVideo(true);
+				}
+			}
+		});
+
 		quitLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				StartingScreen.this.frame.dispose();
 			}
 		});
+	}
+
+	public boolean isGoToVideo() {
+		return this.goToVideo;
+	}
+
+	public void setGoToVideo(boolean goToVideo) {
+		this.goToVideo = goToVideo;
+	}
+
+	public String getPath() {
+		return this.path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public boolean isSetupVideoReader() {
+		return this.setupVideoReader;
+	}
+
+	public void setSetupVideoReader(boolean setupVideoReader) {
+		this.setupVideoReader = setupVideoReader;
 	}
 }
