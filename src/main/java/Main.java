@@ -13,6 +13,7 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		Main instance = new Main();
 		instance.init();
+
 	}
 
 	public void init() throws InterruptedException {

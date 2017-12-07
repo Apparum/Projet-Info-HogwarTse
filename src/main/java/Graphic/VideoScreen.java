@@ -9,23 +9,39 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import Detection.HOGDetection;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+
 import Video.VideoReader;
 
 public class VideoScreen {
 
 	private JFrame frame;
 	private String path;
-	private HOGDetection hog1;
 	private int currentFrame = 0;
 	private VideoReader video;
 	private JLabel contentLabel = new JLabel("");
 	private boolean play = false;
+	private boolean clickParity = false;
+	Rect zoneModif = new Rect();
+	List<Rect> rects = new ArrayList<>();
+	final Point rectPoint1 = new Point();
+	final Point rectPoint2 = new Point();
+	final Scalar rectColor = new Scalar(255, 0, 0);
 
 	public boolean isPlay() {
 		return this.play;
@@ -92,7 +108,7 @@ public class VideoScreen {
 		this.frame.getContentPane().setLayout(null);
 
 		this.contentLabel.setBackground(new Color(98, 104, 104));
-		this.contentLabel.setBounds(50, 31, 824, 465);
+		this.contentLabel.setBounds(50, 31, 750, 465);
 		this.frame.getContentPane().add(this.contentLabel);
 
 		Label menuLabel = new Label("Menu");
@@ -152,6 +168,25 @@ public class VideoScreen {
 		this.frameLabel.setBounds(358, 555, 176, 24);
 		this.frame.getContentPane().add(this.frameLabel);
 
+		java.awt.List rectList = new java.awt.List();
+		rectList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int selectedItem = rectList.getSelectedIndex();
+					rectList.remove(selectedItem);
+					VideoScreen.this.rects.remove(selectedItem);
+					VideoScreen.this.refresh();
+				}
+			}
+		});
+		rectList.setForeground(Color.WHITE);
+		rectList.setFont(new Font("Arial", Font.PLAIN, 12));
+		rectList.setBackground(Color.DARK_GRAY);
+		rectList.setMultipleMode(false);
+		rectList.setBounds(806, 31, 108, 465);
+		this.frame.getContentPane().add(rectList);
+
 		menuLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -165,10 +200,61 @@ public class VideoScreen {
 				VideoScreen.this.setGoToStat(true);
 			}
 		});
+
+		this.contentLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			// Double click
+			/*
+			 * public void mouseClicked(MouseEvent e) { if (VideoScreen.this.clickParity ==
+			 * false) { double[] pt = new double[2]; pt[0] = e.getX(); pt[1] = e.getY();
+			 * VideoScreen.this.zoneModif.set(pt); VideoScreen.this.clickParity = true; }
+			 * else { double[] pt = new double[2]; pt[0] = e.getX(); pt[1] = e.getY();
+			 * VideoScreen.this.zoneModif.width = e.getX() - VideoScreen.this.zoneModif.x;
+			 * VideoScreen.this.zoneModif.height = e.getY() - VideoScreen.this.zoneModif.y;
+			 * VideoScreen.this.clickParity = false;
+			 * VideoScreen.this.rects.add(VideoScreen.this.zoneModif);
+			 * rectList.add(VideoScreen.this.zoneModif.toString());
+			 * VideoScreen.this.zoneModif = new Rect(); VideoScreen.this.refresh(); } }
+			 */
+			// Click and Drag
+			public void mousePressed(MouseEvent e) {
+				double[] pt = new double[2];
+				pt[0] = e.getX();
+				pt[1] = e.getY();
+				VideoScreen.this.zoneModif.set(pt);
+				VideoScreen.this.clickParity = true;
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				double[] pt = new double[2];
+				pt[0] = e.getX();
+				pt[1] = e.getY();
+				VideoScreen.this.zoneModif.width = e.getX() - VideoScreen.this.zoneModif.x;
+				VideoScreen.this.zoneModif.height = e.getY() - VideoScreen.this.zoneModif.y;
+				VideoScreen.this.clickParity = false;
+				VideoScreen.this.rects.add(VideoScreen.this.zoneModif);
+				rectList.add(VideoScreen.this.zoneModif.toString());
+				VideoScreen.this.zoneModif = new Rect();
+				VideoScreen.this.refresh();
+			}
+		});
+
 	}
 
 	public void refresh() {
-		final ImageIcon image = new ImageIcon(this.video.getImage(this.currentFrame).getImage()
+		Mat tmp = this.video.getMat(this.currentFrame).clone();
+		for (int i = 0; i < this.rects.size(); i++) {
+			Rect rect = this.rects.get(i);
+			float yRatio = (float) this.contentLabel.getHeight()
+					/ (float) this.video.getMat(this.currentFrame).height();
+			float xRatio = (float) this.contentLabel.getWidth() / (float) this.video.getMat(this.currentFrame).width();
+			this.rectPoint1.x = rect.x / xRatio;
+			this.rectPoint1.y = rect.y / yRatio;
+			this.rectPoint2.x = (rect.x / xRatio) + (rect.width / xRatio);
+			this.rectPoint2.y = (rect.y / yRatio) + (rect.height / yRatio);
+			Imgproc.rectangle(tmp, this.rectPoint1, this.rectPoint2, this.rectColor, 1);
+		}
+		final ImageIcon image = new ImageIcon(new ImageIcon(MatToBufferedImage(tmp)).getImage()
 				.getScaledInstance(this.contentLabel.getWidth(), this.contentLabel.getHeight(), Image.SCALE_SMOOTH));
 		this.contentLabel.setIcon(image);
 		this.frameLabel.setText("Frame : " + this.currentFrame + "/" + (this.video.size() - 1));
@@ -188,11 +274,35 @@ public class VideoScreen {
 	}
 
 	public VideoReader getVideo() {
-		return video;
+		return this.video;
 	}
 
 	public void setVideo(VideoReader video) {
 		this.video = video;
+	}
+
+	public static BufferedImage MatToBufferedImage(final Mat frame) {
+		// Mat() to BufferedImage
+		int type = 0;
+		if (frame.channels() == 1) {
+			type = BufferedImage.TYPE_BYTE_GRAY;
+		} else if (frame.channels() == 3) {
+			type = BufferedImage.TYPE_3BYTE_BGR;
+		}
+		final BufferedImage image = new BufferedImage(frame.width(), frame.height(), type);
+		final WritableRaster raster = image.getRaster();
+		final DataBufferByte dataBuffer = (DataBufferByte) raster.getDataBuffer();
+		final byte[] data = dataBuffer.getData();
+		frame.get(0, 0, data);
+
+		return image;
+	}
+
+	public static Mat bufferedImageToMat(BufferedImage bi) {
+		Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
+		byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+		mat.put(0, 0, data);
+		return mat;
 	}
 
 	public boolean moveFrame(int move) {

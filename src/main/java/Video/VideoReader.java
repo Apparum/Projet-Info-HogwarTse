@@ -3,9 +3,9 @@ package Video;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
-import java.util.List;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
+import java.util.List;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -20,7 +20,7 @@ import Detection.HOGDetection;
 public class VideoReader {
 
 	private VideoCapture video;
-	private List<ImageIcon> frames = new ArrayList<>();
+	private List<Mat> frames = new ArrayList<>();
 	private String path;
 	private HOGDetection hog = new HOGDetection();
 	final Point rectPoint1 = new Point();
@@ -39,8 +39,8 @@ public class VideoReader {
 		this.video.read(frame);
 		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
+		System.out.println("There are " + size + " frames");
 		while (this.video.read(frame)) {
-			// faire appel à HOG
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			this.rects.add(this.hog.detect(frame));
 
@@ -49,12 +49,11 @@ public class VideoReader {
 				this.rectPoint1.y = rect.y;
 				this.rectPoint2.x = rect.x + rect.width;
 				this.rectPoint2.y = rect.y + rect.height;
-				// Draw rectangle around fond object
-				Imgproc.rectangle(frame, this.rectPoint1, this.rectPoint2, this.rectColor, 2);
+				Imgproc.rectangle(frame, this.rectPoint1, this.rectPoint2, this.rectColor, 1);
 			}
 
-			final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
-			this.frames.add(image);
+			// final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
+			this.frames.add(frame.clone());
 			currentFrame += 1;
 		}
 		System.out.println("Loading completed !");
@@ -64,7 +63,7 @@ public class VideoReader {
 		return this.frames.size();
 	}
 
-	public ImageIcon getImage(int frame) {
+	public Mat getMat(int frame) {
 		return this.frames.get(frame);
 	}
 
