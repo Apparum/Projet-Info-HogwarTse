@@ -25,6 +25,7 @@ public class VideoReader {
 
 	private VideoCapture video;
 	private List<Mat> frames = new ArrayList<>();
+	private List<Mat> framesClone = new ArrayList<>();
 	private String path;
 	private HOGDetection hog = new HOGDetection();
 	final Scalar rectColor = new Scalar(0, 255, 0);
@@ -44,12 +45,36 @@ public class VideoReader {
 		System.out.println("There are " + size + " frames");
 		
 		Video vid = new Video();
+		
+		while(this.video.read(frame)) {
+			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
+			Image_ img = this.hog.detect(frame);
+			vid.addImage(img);
+			this.framesClone.add(frame.clone());
+		}
+		
+		vid.interpolation();
 		int compteur = 0;
+		for(Mat matFrame : framesClone) {
+			for(final rectangle rect : vid.getImage(compteur).getRectangles()) {
+				Imgproc.rectangle(matFrame, rect.getCoord_hg(), rect.getCoord_bd(), this.rectColor, 1);
+				Imgproc.putText(matFrame, String.format("%s", rect.getLabel()),
+						rect.getCoord_hg(), 1, 2, new Scalar(0, 0, 255));
+			}
+			compteur+=1;
+
+			// final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
+			this.frames.add(frame.clone());
+		}
+		
+		
+		/////////////////////////  Code Dorian ////////////////////////////////////////
+		/*
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			
 			Image_ img = this.hog.detect(frame);
-						
+			System.out.println("ca marche");
 			vid.addImage(img);
 			
 			//this.rects.add(this.hog.detect(frame));
@@ -58,8 +83,8 @@ public class VideoReader {
 			
 			for(final rectangle rect : vid.getImage(compteur).getRectangles()) {
 				Imgproc.rectangle(frame, rect.getCoord_hg(), rect.getCoord_bd(), this.rectColor, 1);
-				Imgproc.putText(frame, String.format("%s", rect.getLabel()),
-						rect.getCoord_hg(), 1, 2, new Scalar(0, 0, 255));
+				//Imgproc.putText(frame, String.format("%s", rect.getLabel()),
+				//		new Point(rectPoint1.x, rectPoint1.y), 1, 2, new Scalar(0, 0, 255));
 			}
 			compteur+=1;
 
@@ -67,6 +92,9 @@ public class VideoReader {
 			this.frames.add(frame.clone());
 			currentFrame += 1;
 		}
+		
+		*/
+		///////////////////////////////////////////////////////////////
 		System.out.println("Loading completed !");
 	}
 
