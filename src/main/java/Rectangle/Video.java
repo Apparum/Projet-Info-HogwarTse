@@ -47,40 +47,38 @@ public class Video {
 	public Image_ getImage(int indice) {
 		return listImage.get(indice);
 	}
-	
-	public List<Image_> getImages(){
+
+	public List<Image_> getImages() {
 		return listImage;
 	}
 
 	public void labellisation(boolean firstImg) {
 		// Pour la premiere image on les numerotes dans l'ordre d'apparition
-		if(firstImg) {
+		if (firstImg) {
 			int compteur = 1;
-			for(rectangle rect : this.listImage.get(0).getRectangles())
-			{
+			for (rectangle rect : this.listImage.get(0).getRectangles()) {
 				rect.setLabel(compteur);
-				compteur +=1;
+				compteur += 1;
 			}
-		}
-		else {
-			for(rectangle rectActuels : this.listImage.get(listImage.size()-1).getRectangles()) {
+		} else {
+			for (rectangle rectActuels : this.listImage.get(listImage.size() - 1).getRectangles()) {
 				Point centerActuel = rectActuels.getCenter();
-				for(rectangle rectPast : this.listImage.get(listImage.size()-2).getRectangles()) {
-					if(this.isCloseTo(centerActuel, rectPast.getCenter())) {
+				for (rectangle rectPast : this.listImage.get(listImage.size() - 2).getRectangles()) {
+					if (this.isCloseTo(centerActuel, rectPast.getCenter())) {
 						rectActuels.setLabel(rectPast.getLabel());
-						//break;
+						// break;
 					}
 				}
 			}
 		}
 	}
-	
+
 	/*
 	 * Retourne true si le point p1 est proche du point p2
 	 */
 	public boolean isCloseTo(Point p1, Point p2) {
-		if(p1.x<p2.x + 10 && p1.x>p2.x -10) {
-			if(p1.y<p2.y + 10 && p1.y>p2.y -10) {
+		if (p1.x < p2.x + 10 && p1.x > p2.x - 10) {
+			if (p1.y < p2.y + 10 && p1.y > p2.y - 10) {
 				return true;
 			}
 		}
@@ -88,36 +86,29 @@ public class Video {
 	}
 
 	public void interpolation() {
-		// On parcourt les images de la deuxième à l'avant-dernière et on fait une interpolation de chaque image avec sa précédente et sa suivante
+		// On parcourt les images de la deuxième à l'avant-dernière et on fait une
+		// interpolation de chaque image avec sa précédente et sa suivante
 		int compteur = 0;
-		
-		for(Image_ img : this.listImage) {
-			if(compteur >0 && compteur <this.listImage.size()-2) {
-				for(rectangle rectActuel : img.getRectangles()) {
-					// On parcourt tous les rectangle de la frame precedente
-					double max=0;
-					rectangle rectInterpPrevious=null;
-					for(rectangle rectPrevious : this.listImage.get(compteur-1).getRectangles()) {
-						if(rectActuel.matchWithZone(rectPrevious)>=max) {
-							max = rectActuel.matchWithZone(rectPrevious);
-							rectInterpPrevious = rectPrevious;
-						}
-					}
-					max=0;
-					rectangle rectInterpNext=null;
-					for(rectangle rectNext : this.listImage.get(compteur+1).getRectangles()) {
-						if(rectActuel.matchWithZone(rectNext)>=max) {
-							max = rectActuel.matchWithZone(rectNext);
+
+		for (Image_ img : this.listImage) {
+			if (compteur > 0 && compteur < this.listImage.size() - 2) {
+
+				for (rectangle rectPrevious : this.listImage.get(compteur - 1).getRectangles()) {
+					double max = 0;
+					rectangle rectInterpNext = null;
+					for (rectangle rectNext : this.listImage.get(compteur + 1).getRectangles()) {
+						if (rectPrevious.matchWithZone(rectNext) >= max) {
+							max = rectPrevious.matchWithZone(rectPrevious);
 							rectInterpNext = rectNext;
 						}
 					}
-					if(rectInterpNext != null && rectInterpPrevious != null) {
-						img.addMid(rectInterpPrevious, rectInterpNext);
+					if (rectInterpNext != null) {
+						img.addMid(rectPrevious, rectInterpNext);
 					}
 				}
+
 			}
 		}
 	}
-	
-	
+
 }
