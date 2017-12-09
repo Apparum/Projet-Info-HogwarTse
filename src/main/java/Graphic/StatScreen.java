@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+@SuppressWarnings("unused")
 public class StatScreen {
 
 	private JFrame frame;

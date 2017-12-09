@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import Graphic.VideoScreen;
 import java.awt.TextArea;
 
+@SuppressWarnings("unused")
 public class StartingScreen {
 
 	private JFrame frame;
