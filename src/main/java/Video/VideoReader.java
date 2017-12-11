@@ -16,17 +16,20 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
 import Detection.HOGDetection;
+import Rectangle.Image_;
+import Rectangle.Video;
+import Rectangle.rectangle;
 
+@SuppressWarnings("unused")
 public class VideoReader {
 
 	private VideoCapture video;
 	private List<Mat> frames = new ArrayList<>();
+	private List<Mat> framesClone = new ArrayList<>();
 	private String path;
 	private HOGDetection hog = new HOGDetection();
-	final Point rectPoint1 = new Point();
-	final Point rectPoint2 = new Point();
 	final Scalar rectColor = new Scalar(0, 255, 0);
-	private List<List<Rect>> rects = new ArrayList<>();
+	private List<List<rectangle>> rects = new ArrayList<>();
 
 	public VideoReader(String path) {
 		this.path = path;
@@ -40,22 +43,58 @@ public class VideoReader {
 		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
+		
+		Video vid = new Video();
+		
+		while(this.video.read(frame)) {
+			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
+			Image_ img = this.hog.detect(frame);
+			vid.addImage(img);
+			this.framesClone.add(frame.clone());
+		}
+		
+		vid.interpolation();
+		int compteur = 0;
+		for(Mat matFrame : framesClone) {
+			for(final rectangle rect : vid.getImage(compteur).getRectangles()) {
+				Imgproc.rectangle(matFrame, rect.getCoord_hg(), rect.getCoord_bd(), this.rectColor, 1);
+				Imgproc.putText(matFrame, String.format("%s", rect.getLabel()),
+						rect.getCoord_hg(), 1, 2, new Scalar(0, 0, 255));
+			}
+			compteur+=1;
+
+			// final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
+			this.frames.add(frame.clone());
+		}
+		
+		
+		/////////////////////////  Code Dorian ////////////////////////////////////////
+		/*
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-			this.rects.add(this.hog.detect(frame));
+			
+			Image_ img = this.hog.detect(frame);
+			System.out.println("ca marche");
+			vid.addImage(img);
+			
+			//this.rects.add(this.hog.detect(frame));
 
-			for (final Rect rect : this.rects.get(currentFrame)) {
-				this.rectPoint1.x = rect.x;
-				this.rectPoint1.y = rect.y;
-				this.rectPoint2.x = rect.x + rect.width;
-				this.rectPoint2.y = rect.y + rect.height;
-				Imgproc.rectangle(frame, this.rectPoint1, this.rectPoint2, this.rectColor, 1);
+			// On fait une interpolation sur rects ici !
+			
+			for(final rectangle rect : vid.getImage(compteur).getRectangles()) {
+				Imgproc.rectangle(frame, rect.getCoord_hg(), rect.getCoord_bd(), this.rectColor, 1);
+				//Imgproc.putText(frame, String.format("%s", rect.getLabel()),
+				//		new Point(rectPoint1.x, rectPoint1.y), 1, 2, new Scalar(0, 0, 255));
 			}
+			compteur+=1;
 
 			// final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
 			this.frames.add(frame.clone());
 			currentFrame += 1;
 		}
+		
+		*/
+		///////////////////////////////////////////////////////////////
 		System.out.println("Loading completed !");
 	}
 
@@ -91,5 +130,4 @@ public class VideoReader {
 	public void setVideo(VideoCapture video) {
 		this.video = video;
 	}
-
 }
