@@ -2,12 +2,16 @@ package Graphic;
 
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -46,13 +50,16 @@ public class StatScreen {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
 		this.frame.setResizable(false);
 		this.frame.getContentPane().setBackground(new Color(13, 31, 45));
-		this.frame.setBounds(100, 100, 930, 624);
+		this.frame.setBounds(0, 0, 930, 624);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(null);
+		this.frame.setLocation((dim.width / 2) - (this.frame.getSize().width / 2),
+				(dim.height / 2) - (this.frame.getSize().height / 2));
 
 		this.frameLabel.setForeground(Color.WHITE);
 		this.frameLabel.setFont(null);
@@ -119,6 +126,23 @@ public class StatScreen {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				StatScreen.this.setGoToVideo(true);
+			}
+		});
+
+		this.frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				float xlen = (float) StatScreen.this.frame.getWidth() / 930;
+				float ylen = (float) StatScreen.this.frame.getHeight() / 624;
+				StatScreen.this.frameLabel.setBounds((int) (358 * xlen), (int) (555 * ylen), (int) (176 * xlen),
+						(int) (24 * ylen));
+				StatScreen.this.contentLabel.setBounds((int) (50 * xlen), (int) (31 * ylen), (int) (824 * xlen),
+						(int) (465 * ylen));
+				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
+				videoLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
+				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
+				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
+				playButton.setBounds((int) (404 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 			}
 		});
 

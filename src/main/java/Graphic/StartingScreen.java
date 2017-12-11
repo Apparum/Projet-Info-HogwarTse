@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 import java.awt.Canvas;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileSystemView;
 
@@ -27,6 +29,10 @@ import java.awt.event.MouseEvent;
 
 import Graphic.VideoScreen;
 import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 @SuppressWarnings("unused")
 public class StartingScreen {
@@ -56,18 +62,34 @@ public class StartingScreen {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
 		this.frame = new JFrame();
-		this.frame.setResizable(false);
+		this.frame.setResizable(true);
 		this.frame.getContentPane().setBackground(new Color(13, 31, 45));
-		this.frame.setBounds(100, 100, 930, 624);
+		this.frame.setBounds(0, 0, 930, 624);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(null);
+		this.frame.setLocation((dim.width / 2) - (this.frame.getSize().width / 2),
+				(dim.height / 2) - (this.frame.getSize().height / 2));
 
 		Button playButton = new Button("Play");
 		playButton.setBackground(new Color(89, 131, 146));
 		playButton.setForeground(Color.WHITE);
 		playButton.setBounds(337, 372, 200, 65);
 		this.frame.getContentPane().add(playButton);
+
+		TextField indiceTextField = new TextField();
+		indiceTextField.setBackground(new Color(98, 104, 104));
+		indiceTextField.setText("1");
+		indiceTextField.setBounds(191, 372, 24, 24);
+		this.frame.getContentPane().add(indiceTextField);
+
+		Label indiceLabel = new Label("Take 1 frame out of");
+		indiceLabel.setBackground(new Color(98, 104, 104));
+		indiceLabel.setAlignment(Label.RIGHT);
+		indiceLabel.setBounds(60, 369, 125, 24);
+		this.frame.getContentPane().add(indiceLabel);
 
 		Label contentLabel = new Label("Welcome on the Hogwar\'Tse software for human detection");
 		contentLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
@@ -79,7 +101,6 @@ public class StartingScreen {
 
 		Canvas contentRect = new Canvas();
 		contentRect.setBackground(new Color(98, 104, 104));
-		contentRect.setBounds(50, 95, 824, 401);
 		this.frame.getContentPane().add(contentRect);
 
 		Label titleLabel = new Label("Hogwar'TSE");
@@ -153,6 +174,27 @@ public class StartingScreen {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				StartingScreen.this.frame.dispose();
+			}
+		});
+
+		this.frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				float xlen = (float) StartingScreen.this.frame.getWidth() / 930;
+				float ylen = (float) StartingScreen.this.frame.getHeight() / 624;
+				playButton.setBounds((int) (337 * xlen), (int) (372 * ylen), (int) (200 * xlen), (int) (65 * ylen));
+				indiceTextField.setBounds((int) (191 * xlen), (int) (372 * ylen), (int) (24 * xlen), (int) (24 * ylen));
+				indiceLabel.setBounds((int) (60 * xlen), (int) (369 * ylen), (int) (125 * xlen), (int) (24 * ylen));
+				contentLabel.setBounds((int) (50 * xlen), (int) (95 * ylen), (int) (824 * xlen), (int) (275 * ylen));
+				contentRect.setBounds((int) (50 * xlen), (int) (95 * ylen), (int) (824 * xlen), (int) (401 * ylen));
+				titleLabel.setBounds((int) (52 * xlen), (int) (29 * ylen), (int) (204 * xlen), (int) (40 * ylen));
+				titleRect.setBounds((int) (50 * xlen), (int) (27 * ylen), (int) (208 * xlen), (int) (44 * ylen));
+				quitLabel.setBounds((int) (668 * xlen), (int) (29 * ylen), (int) (204 * xlen), (int) (40 * ylen));
+				quitRect.setBounds((int) (666 * xlen), (int) (27 * ylen), (int) (208 * xlen), (int) (44 * ylen));
+				browserButton.setBounds((int) (729 * xlen), (int) (526 * ylen), (int) (145 * xlen), (int) (38 * ylen));
+				browserLabel.setBounds((int) (53 * xlen), (int) (529 * ylen), (int) (683 * xlen), (int) (32 * ylen));
+				browserRectBorder.setBounds((int) (50 * xlen), (int) (526 * ylen), (int) (686 * xlen),
+						(int) (38 * ylen));
 			}
 		});
 	}

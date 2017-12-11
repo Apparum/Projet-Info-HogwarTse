@@ -2,11 +2,15 @@ package Graphic;
 
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -36,7 +40,6 @@ public class VideoScreen {
 	private VideoReader video;
 	private JLabel contentLabel = new JLabel("");
 	private boolean play = false;
-	private boolean clickParity = false;
 	Rect zoneModif = new Rect();
 	List<Rect> rects = new ArrayList<>();
 	final Point rectPoint1 = new Point();
@@ -99,13 +102,16 @@ public class VideoScreen {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
 		this.frame.setResizable(false);
 		this.frame.getContentPane().setBackground(new Color(13, 31, 45));
-		this.frame.setBounds(100, 100, 930, 624);
+		this.frame.setBounds(0, 0, 930, 624);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(null);
+		this.frame.setLocation((dim.width / 2) - (this.frame.getSize().width / 2),
+				(dim.height / 2) - (this.frame.getSize().height / 2));
 
 		this.contentLabel.setBackground(new Color(98, 104, 104));
 		this.contentLabel.setBounds(50, 31, 750, 465);
@@ -203,26 +209,11 @@ public class VideoScreen {
 
 		this.contentLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			// Double click
-			/*
-			 * public void mouseClicked(MouseEvent e) { if (VideoScreen.this.clickParity ==
-			 * false) { double[] pt = new double[2]; pt[0] = e.getX(); pt[1] = e.getY();
-			 * VideoScreen.this.zoneModif.set(pt); VideoScreen.this.clickParity = true; }
-			 * else { double[] pt = new double[2]; pt[0] = e.getX(); pt[1] = e.getY();
-			 * VideoScreen.this.zoneModif.width = e.getX() - VideoScreen.this.zoneModif.x;
-			 * VideoScreen.this.zoneModif.height = e.getY() - VideoScreen.this.zoneModif.y;
-			 * VideoScreen.this.clickParity = false;
-			 * VideoScreen.this.rects.add(VideoScreen.this.zoneModif);
-			 * rectList.add(VideoScreen.this.zoneModif.toString());
-			 * VideoScreen.this.zoneModif = new Rect(); VideoScreen.this.refresh(); } }
-			 */
-			// Click and Drag
 			public void mousePressed(MouseEvent e) {
 				double[] pt = new double[2];
 				pt[0] = e.getX();
 				pt[1] = e.getY();
 				VideoScreen.this.zoneModif.set(pt);
-				VideoScreen.this.clickParity = true;
 			}
 
 			public void mouseReleased(MouseEvent e) {
@@ -231,11 +222,28 @@ public class VideoScreen {
 				pt[1] = e.getY();
 				VideoScreen.this.zoneModif.width = e.getX() - VideoScreen.this.zoneModif.x;
 				VideoScreen.this.zoneModif.height = e.getY() - VideoScreen.this.zoneModif.y;
-				VideoScreen.this.clickParity = false;
 				VideoScreen.this.rects.add(VideoScreen.this.zoneModif);
 				rectList.add(VideoScreen.this.zoneModif.toString());
 				VideoScreen.this.zoneModif = new Rect();
 				VideoScreen.this.refresh();
+			}
+		});
+
+		this.frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
+				VideoScreen.this.contentLabel.setBounds((int) (50 * xlen), (int) (31 * ylen), (int) (750 * xlen),
+						(int) (465 * ylen));
+				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
+				statLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (34 * xlen), (int) (40 * ylen));
+				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
+				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
+				playButton.setBounds((int) (404 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
+				VideoScreen.this.frameLabel.setBounds((int) (358 * xlen), (int) (555 * ylen), (int) (176 * xlen),
+						(int) (24 * ylen));
+				rectList.setBounds((int) (806 * xlen), (int) (31 * ylen), (int) (108 * xlen), (int) (465 * ylen));
 			}
 		});
 
