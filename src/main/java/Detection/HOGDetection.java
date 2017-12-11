@@ -1,6 +1,7 @@
 package Detection;
 
 import java.awt.image.BufferedImage;
+
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +20,12 @@ import Rectangle.Image_;
 import Rectangle.Video;
 import Rectangle.rectangle;
 
+import java.awt.Rectangle;
+
 @SuppressWarnings("unused")
 public class HOGDetection {
 
-	public List<Rect> detect(Mat frame) {
+	public List<Rectangle> detect(Mat frame) {
 		HOGDescriptor hog = new HOGDescriptor(new Size(32, 64), new Size(8, 8), new Size(4, 4), new Size(4, 4), 9, 1,
 				-1, 1, 0.2, true, 16, false);
 		MatOfFloat descriptors = HOGDescriptor.getDefaultPeopleDetector();
@@ -31,11 +34,13 @@ public class HOGDetection {
 		Size winStride = new Size(0, 0);
 		Size padding = new Size(4, 4);
 		hog.setSVMDetector(descriptors);
-		List<Rect> rectList = new ArrayList<>();
+		List<Rectangle> rectList = new ArrayList<>();
 		hog.detectMultiScale(frame, foundLocations, foundWeights, 0, winStride, padding, 1.05, 1, false);
 		
 		if (foundLocations.rows() > 0) {
-			rectList = foundLocations.toList();
+			for(Rect rect : foundLocations.toList()) {
+				rectList.add(new Rectangle(rect.x, rect.y, rect.width, rect.height));
+			}
 		}
 		
 		/*
