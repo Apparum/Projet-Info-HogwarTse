@@ -22,7 +22,7 @@ import Rectangle.rectangle;
 @SuppressWarnings("unused")
 public class HOGDetection {
 
-	public Image_ detect(Mat frame) {
+	public List<Rect> detect(Mat frame) {
 		HOGDescriptor hog = new HOGDescriptor(new Size(32, 64), new Size(8, 8), new Size(4, 4), new Size(4, 4), 9, 1,
 				-1, 1, 0.2, true, 16, false);
 		MatOfFloat descriptors = HOGDescriptor.getDefaultPeopleDetector();
@@ -33,10 +33,12 @@ public class HOGDetection {
 		hog.setSVMDetector(descriptors);
 		List<Rect> rectList = new ArrayList<>();
 		hog.detectMultiScale(frame, foundLocations, foundWeights, 0, winStride, padding, 1.05, 1, false);
+		
 		if (foundLocations.rows() > 0) {
 			rectList = foundLocations.toList();
 		}
 		
+		/*
 		Image_ img = new Image_();
 		//List<rectangle> list_point = new ArrayList<>();
 		for (final Rect rect : rectList) { // On stocke les coordonnées des rectangles dans list_point
@@ -57,10 +59,12 @@ public class HOGDetection {
 			// rectPoint1.x, rectPoint1.y, rectPoint2.x, rectPoint2.y));
 			// System.out.println(list_point);
 		}
+		*/
+		
 		// On affiche le nombre de personnes detectées sur la console
 		System.out.println(String.format("%s FACES detected.", foundLocations.toArray().length));
 		
-		return img;
+		return rectList;
 		//return list_point;
 	}
 
