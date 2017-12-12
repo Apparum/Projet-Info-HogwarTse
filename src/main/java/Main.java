@@ -36,6 +36,7 @@ public class Main {
 				this.statScreen.setVisible(false);
 				this.startingScreen.setGoToVideo(false);
 				this.statScreen.setGoToVideo(false);
+				this.videoScreen.setFrameoff(this.startingScreen.getFrameoff());
 			}
 			if (this.goToStatScreen == true) {
 				this.statScreen.setVisible(true);
@@ -55,6 +56,10 @@ public class Main {
 				if (!this.videoScreen.moveFrame(1)) {
 					this.videoScreen.setPlay(false);
 				}
+			}
+			if (this.startingScreen.isQuit()) {
+				// couper pdt chargement
+				break;
 			}
 		}
 	}

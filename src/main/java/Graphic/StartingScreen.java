@@ -33,6 +33,13 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.Checkbox;
+import java.awt.event.TextListener;
+import java.awt.event.TextEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 @SuppressWarnings("unused")
 public class StartingScreen {
@@ -42,6 +49,8 @@ public class StartingScreen {
 	boolean fileChoosed = false;
 	private boolean goToVideo;
 	private boolean setupVideoReader = false;
+	private boolean quit = false;
+	private int frameoff = 1;
 
 	/**
 	 * Launch the application.
@@ -79,7 +88,33 @@ public class StartingScreen {
 		playButton.setBounds(337, 372, 200, 65);
 		this.frame.getContentPane().add(playButton);
 
+		Label HOGVisibilityLabel = new Label("Is HOG visible");
+		HOGVisibilityLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		HOGVisibilityLabel.setBackground(new Color(98, 104, 104));
+		HOGVisibilityLabel.setAlignment(Label.RIGHT);
+		HOGVisibilityLabel.setBounds(60, 398, 125, 24);
+		this.frame.getContentPane().add(HOGVisibilityLabel);
+
+		Checkbox HOGVisibilityCheckbox = new Checkbox("");
+		HOGVisibilityCheckbox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				e.getStateChange();
+				// FAIRE L'ENVOI VERS VIDEOREADER POUR PLUS TRACER LE RECTANGLE 1 vrai 2 faux
+			}
+		});
+		HOGVisibilityCheckbox.setBackground(new Color(98, 104, 104));
+		HOGVisibilityCheckbox.setBounds(191, 398, 24, 24);
+		this.frame.getContentPane().add(HOGVisibilityCheckbox);
+
 		TextField indiceTextField = new TextField();
+		indiceTextField.addTextListener(new TextListener() {
+			public void textValueChanged(TextEvent e) {
+				if (indiceTextField.getText().matches("^[0-9]+$")) {
+					System.out.println(indiceTextField.getText());
+					StartingScreen.this.setFrameoff(Integer.parseInt(indiceTextField.getText()));
+				}
+			}
+		});
 		indiceTextField.setBackground(new Color(98, 104, 104));
 		indiceTextField.setText("1");
 		indiceTextField.setBounds(191, 372, 24, 24);
@@ -87,6 +122,7 @@ public class StartingScreen {
 
 		Label indiceLabel = new Label("Take 1 frame out of");
 		indiceLabel.setBackground(new Color(98, 104, 104));
+		indiceLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		indiceLabel.setAlignment(Label.RIGHT);
 		indiceLabel.setBounds(60, 369, 125, 24);
 		this.frame.getContentPane().add(indiceLabel);
@@ -173,6 +209,7 @@ public class StartingScreen {
 		quitLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				StartingScreen.this.setQuit(true);
 				StartingScreen.this.frame.dispose();
 			}
 		});
@@ -195,6 +232,10 @@ public class StartingScreen {
 				browserLabel.setBounds((int) (53 * xlen), (int) (529 * ylen), (int) (683 * xlen), (int) (32 * ylen));
 				browserRectBorder.setBounds((int) (50 * xlen), (int) (526 * ylen), (int) (686 * xlen),
 						(int) (38 * ylen));
+				HOGVisibilityLabel.setBounds((int) (60 * xlen), (int) (398 * ylen), (int) (125 * xlen),
+						(int) (24 * ylen));
+				HOGVisibilityCheckbox.setBounds((int) (191 * xlen), (int) (398 * ylen), (int) (24 * xlen),
+						(int) (24 * ylen));
 			}
 		});
 	}
@@ -221,5 +262,21 @@ public class StartingScreen {
 
 	public void setSetupVideoReader(boolean setupVideoReader) {
 		this.setupVideoReader = setupVideoReader;
+	}
+
+	public boolean isQuit() {
+		return this.quit;
+	}
+
+	public void setQuit(boolean quit) {
+		this.quit = quit;
+	}
+
+	public int getFrameoff() {
+		return this.frameoff;
+	}
+
+	public void setFrameoff(int frameoff) {
+		this.frameoff = frameoff;
 	}
 }

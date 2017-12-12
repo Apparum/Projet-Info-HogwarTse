@@ -31,6 +31,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import Video.VideoReader;
+import java.awt.TextField;
+import java.awt.event.TextListener;
+import java.awt.event.TextEvent;
 
 public class VideoScreen {
 
@@ -45,6 +48,7 @@ public class VideoScreen {
 	final Point rectPoint1 = new Point();
 	final Point rectPoint2 = new Point();
 	final Scalar rectColor = new Scalar(255, 0, 0);
+	private int frameoff = 1;
 
 	public boolean isPlay() {
 		return this.play;
@@ -62,6 +66,8 @@ public class VideoScreen {
 
 	public void setup() {
 		this.video = new VideoReader(this.getPath());
+		// A faire
+		// this.video.setFrameoff(this.getFrameoff());
 		this.video.init();
 		this.currentFrame = 0;
 		this.refresh();
@@ -193,6 +199,24 @@ public class VideoScreen {
 		rectList.setBounds(806, 31, 108, 465);
 		this.frame.getContentPane().add(rectList);
 
+		Label gotoLabel = new Label("Go To Frame : ");
+		gotoLabel.setForeground(Color.WHITE);
+		gotoLabel.setFont(null);
+		gotoLabel.setAlignment(Label.RIGHT);
+		gotoLabel.setBounds(540, 555, 102, 24);
+		this.frame.getContentPane().add(gotoLabel);
+
+		TextField gotoTextField = new TextField();
+		gotoTextField.addTextListener(new TextListener() {
+			public void textValueChanged(TextEvent arg0) {
+				VideoScreen.this.setPlay(false);
+				VideoScreen.this.setCurrentFrame(Integer.parseInt(gotoTextField.getText()));
+				VideoScreen.this.refresh();
+			}
+		});
+		gotoTextField.setBounds(641, 555, 24, 24);
+		this.frame.getContentPane().add(gotoTextField);
+
 		menuLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -244,6 +268,8 @@ public class VideoScreen {
 				VideoScreen.this.frameLabel.setBounds((int) (358 * xlen), (int) (555 * ylen), (int) (176 * xlen),
 						(int) (24 * ylen));
 				rectList.setBounds((int) (806 * xlen), (int) (31 * ylen), (int) (108 * xlen), (int) (465 * ylen));
+				gotoLabel.setBounds((int) (540 * xlen), (int) (555 * ylen), (int) (102 * xlen), (int) (24 * ylen));
+				gotoTextField.setBounds((int) (641 * xlen), (int) (555 * ylen), (int) (24 * xlen), (int) (24 * ylen));
 			}
 		});
 
@@ -328,5 +354,13 @@ public class VideoScreen {
 
 	public void setCurrentFrame(int currentFrame) {
 		this.currentFrame = currentFrame;
+	}
+
+	public int getFrameoff() {
+		return this.frameoff;
+	}
+
+	public void setFrameoff(int frameoff) {
+		this.frameoff = frameoff;
 	}
 }
