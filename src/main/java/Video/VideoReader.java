@@ -16,9 +16,9 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
 import Detection.HOGDetection;
-import Rectangle.Image_;
-import Rectangle.Video;
-import Rectangle.rectangle;
+//import Rectangle.Image_;
+//import Rectangle.Video;
+//import Rectangle.rectangle;
 
 import java.awt.Rectangle;
 
@@ -46,7 +46,7 @@ public class VideoReader {
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
 
-		Video vid = new Video();
+//		Video vid = new Video();
 
 		Rectangle rect1 = new Rectangle(1, 1, 1, 1);
 		Rectangle rect2 = new Rectangle(2, 2, 1, 1);

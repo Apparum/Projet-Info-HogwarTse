@@ -16,9 +16,9 @@ import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.objdetect.HOGDescriptor;
 
-import Rectangle.Image_;
-import Rectangle.Video;
-import Rectangle.rectangle;
+//import Rectangle.Image_;
+//import Rectangle.Video;
+//import Rectangle.rectangle;
 
 import java.awt.Rectangle;
 
