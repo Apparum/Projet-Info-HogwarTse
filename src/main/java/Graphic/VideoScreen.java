@@ -45,6 +45,11 @@ public class VideoScreen {
 	private boolean play = false;
 	Rect zoneModif = new Rect();
 	List<Rect> rects = new ArrayList<>();
+
+	public List<Integer> getNbPerFrame() {
+		return this.video.getNbPerFrame();
+	}
+
 	final Point rectPoint1 = new Point();
 	final Point rectPoint2 = new Point();
 	final Scalar rectColor = new Scalar(255, 0, 0);
@@ -61,13 +66,12 @@ public class VideoScreen {
 	Label frameLabel = new Label("");
 	private boolean goToStat;
 	private boolean goToMenu;
-
-	// Deplacer le main dans un global à la fin !!!
+	private boolean hogVisibility = true;
 
 	public void setup() {
 		this.video = new VideoReader(this.getPath());
-		// A faire
-		// this.video.setFrameoff(this.getFrameoff());
+		this.video.setHogVisible(this.isHogVisible());
+		this.video.setFrameoff(this.getFrameoff());
 		this.video.init();
 		this.currentFrame = 0;
 		this.refresh();
@@ -111,7 +115,7 @@ public class VideoScreen {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
-		this.frame.setResizable(false);
+		this.frame.setResizable(true);
 		this.frame.getContentPane().setBackground(new Color(13, 31, 45));
 		this.frame.setBounds(0, 0, 930, 624);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -173,10 +177,10 @@ public class VideoScreen {
 		});
 		playButton.setBounds(404, 522, 79, 24);
 		this.frame.getContentPane().add(playButton);
+
 		this.frameLabel.setForeground(Color.WHITE);
 		this.frameLabel.setFont(null);
 		this.frameLabel.setAlignment(Label.CENTER);
-
 		this.frameLabel.setBounds(358, 555, 176, 24);
 		this.frame.getContentPane().add(this.frameLabel);
 
@@ -261,7 +265,7 @@ public class VideoScreen {
 				VideoScreen.this.contentLabel.setBounds((int) (50 * xlen), (int) (31 * ylen), (int) (750 * xlen),
 						(int) (465 * ylen));
 				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
-				statLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (34 * xlen), (int) (40 * ylen));
+				statLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				playButton.setBounds((int) (404 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
@@ -270,6 +274,7 @@ public class VideoScreen {
 				rectList.setBounds((int) (806 * xlen), (int) (31 * ylen), (int) (108 * xlen), (int) (465 * ylen));
 				gotoLabel.setBounds((int) (540 * xlen), (int) (555 * ylen), (int) (102 * xlen), (int) (24 * ylen));
 				gotoTextField.setBounds((int) (641 * xlen), (int) (555 * ylen), (int) (24 * xlen), (int) (24 * ylen));
+				VideoScreen.this.refresh();
 			}
 		});
 
@@ -362,5 +367,13 @@ public class VideoScreen {
 
 	public void setFrameoff(int frameoff) {
 		this.frameoff = frameoff;
+	}
+
+	public void setHogVisible(boolean hogVisible) {
+		this.hogVisibility = hogVisible;
+	}
+
+	public boolean isHogVisible() {
+		return this.hogVisibility;
 	}
 }

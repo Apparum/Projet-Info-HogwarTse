@@ -13,7 +13,6 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		Main instance = new Main();
 		instance.init();
-
 	}
 
 	public void init() throws InterruptedException {
@@ -27,6 +26,8 @@ public class Main {
 			}
 			if (this.startingScreen.isSetupVideoReader()) {
 				this.videoScreen.setPath(this.startingScreen.getPath());
+				this.videoScreen.setHogVisible(this.startingScreen.isHogVisible());
+				this.videoScreen.setFrameoff(this.startingScreen.getFrameoff());
 				this.videoScreen.setup();
 				this.startingScreen.setSetupVideoReader(false);
 			}
@@ -36,7 +37,6 @@ public class Main {
 				this.statScreen.setVisible(false);
 				this.startingScreen.setGoToVideo(false);
 				this.statScreen.setGoToVideo(false);
-				this.videoScreen.setFrameoff(this.startingScreen.getFrameoff());
 			}
 			if (this.goToStatScreen == true) {
 				this.statScreen.setVisible(true);
@@ -45,6 +45,7 @@ public class Main {
 				this.videoScreen.setGoToStat(false);
 				this.statScreen.setSize(this.videoScreen.size());
 				this.statScreen.setCurrentFrame(this.videoScreen.getCurrentFrame());
+				this.statScreen.setNbPerFrame(this.videoScreen.getNbPerFrame());
 				this.statScreen.refresh();
 				this.videoScreen.setPlay(false);
 			}
@@ -58,7 +59,6 @@ public class Main {
 				}
 			}
 			if (this.startingScreen.isQuit()) {
-				// couper pdt chargement
 				break;
 			}
 		}

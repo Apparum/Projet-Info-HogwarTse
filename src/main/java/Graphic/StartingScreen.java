@@ -51,6 +51,7 @@ public class StartingScreen {
 	private boolean setupVideoReader = false;
 	private boolean quit = false;
 	private int frameoff = 1;
+	private boolean hogVisibility = true;
 
 	/**
 	 * Launch the application.
@@ -96,10 +97,15 @@ public class StartingScreen {
 		this.frame.getContentPane().add(HOGVisibilityLabel);
 
 		Checkbox HOGVisibilityCheckbox = new Checkbox("");
+		HOGVisibilityCheckbox.setState(true);
 		HOGVisibilityCheckbox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				e.getStateChange();
-				// FAIRE L'ENVOI VERS VIDEOREADER POUR PLUS TRACER LE RECTANGLE 1 vrai 2 faux
+				if (e.getStateChange() == 1) {
+					StartingScreen.this.setHogVisible(true);
+				} else {
+					StartingScreen.this.setHogVisible(false);
+				}
 			}
 		});
 		HOGVisibilityCheckbox.setBackground(new Color(98, 104, 104));
@@ -110,7 +116,6 @@ public class StartingScreen {
 		indiceTextField.addTextListener(new TextListener() {
 			public void textValueChanged(TextEvent e) {
 				if (indiceTextField.getText().matches("^[0-9]+$")) {
-					System.out.println(indiceTextField.getText());
 					StartingScreen.this.setFrameoff(Integer.parseInt(indiceTextField.getText()));
 				}
 			}
@@ -191,6 +196,7 @@ public class StartingScreen {
 					browserLabel.setText(StartingScreen.this.path);
 					StartingScreen.this.fileChoosed = true;
 					StartingScreen.this.setupVideoReader = true;
+					browserLabel.setBackground(null);
 				}
 			}
 		});
@@ -198,8 +204,7 @@ public class StartingScreen {
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (StartingScreen.this.fileChoosed == false) {
-					// WARNING NEED TO CHOOSE A FILE FIRST
-					System.out.println("no file");
+					browserLabel.setBackground(Color.RED);
 				} else {
 					StartingScreen.this.setGoToVideo(true);
 				}
@@ -238,6 +243,14 @@ public class StartingScreen {
 						(int) (24 * ylen));
 			}
 		});
+	}
+
+	protected void setHogVisible(boolean b) {
+		this.hogVisibility = b;
+	}
+
+	public boolean isHogVisible() {
+		return this.hogVisibility;
 	}
 
 	public boolean isGoToVideo() {

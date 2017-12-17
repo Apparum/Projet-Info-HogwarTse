@@ -1,5 +1,6 @@
 package Video;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
@@ -9,18 +10,13 @@ import java.util.List;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.video.Video;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
 import Detection.HOGDetection;
-import Rectangle.Image_;
-import Rectangle.Video;
-import Rectangle.rectangle;
-
-import java.awt.Rectangle;
 
 @SuppressWarnings("unused")
 public class VideoReader {
@@ -32,6 +28,13 @@ public class VideoReader {
 	private HOGDetection hog = new HOGDetection();
 	final Scalar rectColor = new Scalar(0, 255, 0);
 	private List<List<Rectangle>> rects = new ArrayList<>();
+	private int frameoff = 1;
+	private boolean hogVisibility = true;
+	private List<Integer> nbPerFrame = new ArrayList<>();
+
+	public List<Integer> getNbPerFrame() {
+		return this.nbPerFrame;
+	}
 
 	public VideoReader(String path) {
 		this.path = path;
@@ -45,82 +48,39 @@ public class VideoReader {
 		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
-
-		Video vid = new Video();
-
-		Rectangle rect1 = new Rectangle(1, 1, 1, 1);
-		Rectangle rect2 = new Rectangle(2, 2, 1, 1);
-		Rectangle rect3 = rect1.intersection(rect2);
-		System.out.println(rect3);
-
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-
-			rects.add(this.hog.detect(frame));
-			/*
-			 * Image_ img = this.hog.detect(frame); vid.addImage(img);
-			 */
+			if ((currentFrame % this.frameoff) == 0) {
+				List<Rectangle> detected = this.hog.detect(frame);
+				this.rects.add(detected);
+				this.nbPerFrame.add(detected.size());
+			} else {
+				this.rects.add(new ArrayList<Rectangle>());
+			}
 			this.framesClone.add(frame.clone());
 			currentFrame += 1;
 		}
-		System.out.println("Fin du chargement");
-
-		// vid.interpolation();
-		rects = this.interpolation(rects);
-
+		this.rects = this.interpolation(this.rects);
 		int nbFrame = 0;
-		for (Mat matFrame : framesClone) {
-			for (final Rectangle rectangle : rects.get(nbFrame)) {
-				Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
-						new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor, 1);
+		for (Mat matFrame : this.framesClone) {
+			if (this.hogVisibility) {
+				for (final Rectangle rectangle : this.rects.get(nbFrame)) {
+					Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
+							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor,
+							1);
+				}
 			}
 			this.frames.add(matFrame.clone());
 			nbFrame += 1;
 		}
-		/*
-		 * int compteur = 0; for (Mat matFrame : framesClone) {
-		 * System.out.println("work in progress"); for (final rectangle rect :
-		 * vid.getImage(compteur).getRectangles()) {
-		 * System.out.println("work in progress"); Imgproc.rectangle(matFrame,
-		 * rect.getCoord_hg(), rect.getCoord_bd(), this.rectColor, 1);
-		 * System.out.println("work in progress"); Imgproc.putText(matFrame,
-		 * String.format("%s", rect.getLabel()), rect.getCoord_hg(), 1, 2, new Scalar(0,
-		 * 0, 255)); System.out.println("work in progress"); } compteur += 1;
-		 * 
-		 * // final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
-		 * this.frames.add(frame.clone()); }
-		 */
-		///////////////////////// Code Dorian ////////////////////////////////////////
-		/*
-		 * while (this.video.read(frame)) { System.out.println("Loading : " + (int)
-		 * ((currentFrame / size) * 100) + "%");
-		 * 
-		 * Image_ img = this.hog.detect(frame); System.out.println("ca marche");
-		 * vid.addImage(img);
-		 * 
-		 * //this.rects.add(this.hog.detect(frame));
-		 * 
-		 * // On fait une interpolation sur rects ici !
-		 * 
-		 * for(final rectangle rect : vid.getImage(compteur).getRectangles()) {
-		 * Imgproc.rectangle(frame, rect.getCoord_hg(), rect.getCoord_bd(),
-		 * this.rectColor, 1); //Imgproc.putText(frame, String.format("%s",
-		 * rect.getLabel()), // new Point(rectPoint1.x, rectPoint1.y), 1, 2, new
-		 * Scalar(0, 0, 255)); } compteur+=1;
-		 * 
-		 * // final ImageIcon image = new ImageIcon(MatToBufferedImage(frame));
-		 * this.frames.add(frame.clone()); currentFrame += 1; }
-		 * 
-		 */
-		///////////////////////////////////////////////////////////////
 		System.out.println("Loading completed !");
 	}
 
 	private int intersectionArea(Rectangle rect1, Rectangle rect2) {
 		Rectangle rect3 = rect1.intersection(rect2);
-		if (rect3.isEmpty())
+		if (rect3.isEmpty()) {
 			return -1;
-		else {
+		} else {
 			return rect3.width * rect3.height;
 		}
 	}
@@ -130,23 +90,23 @@ public class VideoReader {
 		int maxArea;
 		boolean condition;
 		for (List<Rectangle> listRect : listImg) {
-			if (compteur > 0 && compteur < listImg.size() - 1) {
+			if ((compteur > 0) && (compteur < (listImg.size() - 1))) {
 				for (Rectangle rectPrevious : listImg.get(compteur - 1)) {
 					maxArea = 0;
 					Rectangle rectNextIntersect = new Rectangle();
 					for (Rectangle rectNext : listImg.get(compteur + 1)) {
 						condition = true;
 						for (Rectangle actualRect : listImg.get(compteur)) {
-							if(actualRect.intersects(rectNext.intersection(rectPrevious))) {
+							if (actualRect.intersects(rectNext.intersection(rectPrevious))) {
 								condition = false;
 							}
 						}
-						if (this.intersectionArea(rectPrevious, rectNext) > maxArea && condition) {
+						if ((this.intersectionArea(rectPrevious, rectNext) > maxArea) && condition) {
 							maxArea = this.intersectionArea(rectPrevious, rectNext);
 							rectNextIntersect = rectNext;
 						}
 					}
-					if (rectNextIntersect != null && !rectNextIntersect.isEmpty()) {
+					if ((rectNextIntersect != null) && !rectNextIntersect.isEmpty()) {
 						listImg.get(compteur).add(this.rectangleAvg(rectPrevious, rectNextIntersect));
 					}
 				}
@@ -174,7 +134,6 @@ public class VideoReader {
 	}
 
 	public static BufferedImage MatToBufferedImage(final Mat frame) {
-		// Mat() to BufferedImage
 		int type = 0;
 		if (frame.channels() == 1) {
 			type = BufferedImage.TYPE_BYTE_GRAY;
@@ -197,4 +156,14 @@ public class VideoReader {
 	public void setVideo(VideoCapture video) {
 		this.video = video;
 	}
+
+	public void setFrameoff(int frameoff) {
+		this.frameoff = frameoff;
+
+	}
+
+	public void setHogVisible(boolean hogVisible) {
+		this.hogVisibility = hogVisible;
+	}
+
 }

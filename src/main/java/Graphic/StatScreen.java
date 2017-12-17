@@ -14,22 +14,29 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-@SuppressWarnings("unused")
+import org.jfree.ui.RefineryUtilities;
+
+import Stats.Histogramme;
+import java.awt.Panel;
+
 public class StatScreen {
 
 	private JFrame frame;
 	private boolean goToMenu;
 	private boolean goToVideo;
 	Label frameLabel = new Label("");
+	Panel panel = new Panel();
 	private int currentFrame;
 	private int size;
-
-	private JLabel contentLabel = new JLabel("");
+	private List<Integer> NbPerFrame = new ArrayList<>();
+	double[][] data = new double[1][this.NbPerFrame.size()];
 
 	/**
 	 * Launch the application.
@@ -53,7 +60,7 @@ public class StatScreen {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
-		this.frame.setResizable(false);
+		this.frame.setResizable(true);
 		this.frame.getContentPane().setBackground(new Color(13, 31, 45));
 		this.frame.setBounds(0, 0, 930, 624);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,16 +68,16 @@ public class StatScreen {
 		this.frame.setLocation((dim.width / 2) - (this.frame.getSize().width / 2),
 				(dim.height / 2) - (this.frame.getSize().height / 2));
 
+		this.panel.setBounds(50, 37, 824, 465);
+		this.panel.setBackground(new Color(13, 31, 45));
+		this.frame.getContentPane().add(this.panel);
+		this.panel.setLayout(null);
+
 		this.frameLabel.setForeground(Color.WHITE);
 		this.frameLabel.setFont(null);
 		this.frameLabel.setAlignment(Label.CENTER);
-
 		this.frameLabel.setBounds(358, 555, 176, 24);
 		this.frame.getContentPane().add(this.frameLabel);
-
-		this.contentLabel.setBackground(new Color(98, 104, 104));
-		this.contentLabel.setBounds(50, 31, 824, 465);
-		this.frame.getContentPane().add(this.contentLabel);
 
 		Label menuLabel = new Label("Menu");
 		menuLabel.setForeground(new Color(255, 255, 255));
@@ -136,23 +143,39 @@ public class StatScreen {
 				float ylen = (float) StatScreen.this.frame.getHeight() / 624;
 				StatScreen.this.frameLabel.setBounds((int) (358 * xlen), (int) (555 * ylen), (int) (176 * xlen),
 						(int) (24 * ylen));
-				StatScreen.this.contentLabel.setBounds((int) (50 * xlen), (int) (31 * ylen), (int) (824 * xlen),
+				StatScreen.this.panel.setBounds((int) (50 * xlen), (int) (37 * ylen), (int) (824 * xlen),
 						(int) (465 * ylen));
 				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				videoLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				playButton.setBounds((int) (404 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
+				StatScreen.this.refresh();
 			}
 		});
+	}
 
-		this.contentLabel.setIcon(new ImageIcon("png.png"));
-		this.refresh();
+	public double[][] getData() {
+		return this.data;
+	}
+
+	public void setData(double[][] data) {
+		this.data = data;
+	}
+
+	public void setNbPerFrameIntoData() {
+		double[][] data = new double[1][this.NbPerFrame.size()];
+		for (int i = 0; i < this.NbPerFrame.size(); i++) {
+			data[0][i] = this.NbPerFrame.get(i);
+		}
+		this.setData(data);
 	}
 
 	public void refresh() {
 		this.frameLabel.setText("Frame : " + this.currentFrame + "/" + (this.size - 1));
-		this.contentLabel.repaint();
+		this.setNbPerFrameIntoData();
+		this.panel.removeAll();
+		new Histogramme("Nb de personne", this.panel, this.data);
 	}
 
 	public boolean isGoToMenu() {
@@ -177,6 +200,10 @@ public class StatScreen {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public void setNbPerFrame(List<Integer> nbPerFrame) {
+		this.NbPerFrame = nbPerFrame;
 	}
 
 }
