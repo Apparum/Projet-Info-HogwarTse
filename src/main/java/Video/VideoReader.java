@@ -48,6 +48,7 @@ public class VideoReader {
 		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
+
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			if ((currentFrame % this.frameoff) == 0) {
