@@ -3,8 +3,6 @@ package Stats;
 import java.awt.Color;
 import java.awt.Panel;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

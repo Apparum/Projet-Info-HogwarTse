@@ -3,10 +3,10 @@ package Graphic;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,14 +17,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
-import org.jfree.ui.RefineryUtilities;
+import org.opencv.core.Rect;
 
 import Stats.Histogramme;
-import java.awt.Panel;
 
 public class StatScreen {
 
@@ -37,6 +34,8 @@ public class StatScreen {
 	private int size;
 	private List<Integer> NbPerFrame = new ArrayList<>();
 	double[][] data = new double[1][this.NbPerFrame.size()];
+	private List<Rect> rects = new ArrayList<>();
+	private List<List<Rectangle>> rectPeople = new ArrayList<>();
 
 	/**
 	 * Launch the application.
@@ -204,6 +203,15 @@ public class StatScreen {
 
 	public void setNbPerFrame(List<Integer> nbPerFrame) {
 		this.NbPerFrame = nbPerFrame;
+	}
+
+	public void setRectPerFrame(List<Rect> rectPerFrame) {
+		this.rects = rectPerFrame;
+	}
+
+	public void setRectPeoplePerFrame(List<List<Rectangle>> rectPeoplePerFrame) {
+		this.rectPeople = rectPeoplePerFrame;
+
 	}
 
 }

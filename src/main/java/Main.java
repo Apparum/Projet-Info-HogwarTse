@@ -46,6 +46,8 @@ public class Main {
 				this.statScreen.setSize(this.videoScreen.size());
 				this.statScreen.setCurrentFrame(this.videoScreen.getCurrentFrame());
 				this.statScreen.setNbPerFrame(this.videoScreen.getNbPerFrame());
+				this.statScreen.setRectPerFrame(this.videoScreen.getRectPerFrame());
+				this.statScreen.setRectPeoplePerFrame(this.videoScreen.getRectPeoplePerFrame());
 				this.statScreen.refresh();
 				this.videoScreen.setPlay(false);
 			}

@@ -10,6 +10,7 @@ import java.util.List;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.video.Video;
@@ -28,6 +29,7 @@ public class VideoReader {
 	private HOGDetection hog = new HOGDetection();
 	final Scalar rectColor = new Scalar(0, 255, 0);
 	private List<List<Rectangle>> rects = new ArrayList<>();
+
 	private int frameoff = 1;
 	private boolean hogVisibility = true;
 	private List<Integer> nbPerFrame = new ArrayList<>();
@@ -165,6 +167,11 @@ public class VideoReader {
 
 	public void setHogVisible(boolean hogVisible) {
 		this.hogVisibility = hogVisible;
+	}
+
+	public List<List<Rectangle>> getRectPeoplePerFrame() {
+
+		return this.rects;
 	}
 
 }

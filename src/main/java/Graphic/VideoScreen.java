@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,11 +44,20 @@ public class VideoScreen {
 	private VideoReader video;
 	private JLabel contentLabel = new JLabel("");
 	private boolean play = false;
+
 	Rect zoneModif = new Rect();
 	List<Rect> rects = new ArrayList<>();
 
 	public List<Integer> getNbPerFrame() {
 		return this.video.getNbPerFrame();
+	}
+
+	public List<Rect> getRectPerFrame() {
+		return this.rects;
+	}
+
+	public List<List<Rectangle>> getRectPeoplePerFrame() {
+		return this.video.getRectPeoplePerFrame();
 	}
 
 	final Point rectPoint1 = new Point();
@@ -213,9 +223,14 @@ public class VideoScreen {
 		TextField gotoTextField = new TextField();
 		gotoTextField.addTextListener(new TextListener() {
 			public void textValueChanged(TextEvent arg0) {
-				VideoScreen.this.setPlay(false);
-				VideoScreen.this.setCurrentFrame(Integer.parseInt(gotoTextField.getText()));
-				VideoScreen.this.refresh();
+				if (gotoTextField.getText().matches("^[0-9]+$")
+						&& (Integer.parseInt(gotoTextField.getText()) < VideoScreen.this.video.size())) {
+					VideoScreen.this.setPlay(false);
+					VideoScreen.this.setCurrentFrame(Integer.parseInt(gotoTextField.getText()));
+					VideoScreen.this.refresh();
+				} else {
+					gotoTextField.setText("");
+				}
 			}
 		});
 		gotoTextField.setBounds(641, 555, 24, 24);
