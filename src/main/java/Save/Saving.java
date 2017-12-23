@@ -20,6 +20,7 @@ import org.opencv.core.Rect;
 public class Saving {
 
 	public static void main(String[] s) {
+		// Main pour tester
 		List<List<Rectangle>> rects = new ArrayList<List<Rectangle>>();
 
 		for (int i = 1; i < 20; i++) {
@@ -45,7 +46,10 @@ public class Saving {
 	
 
 	public static void sauvegarder(String nom, List<List<Rectangle>> video) {
-
+		/* Fonction pour enregistrer les rectangles dans un fichier .txt.
+		 * nom : nom du fichier => nom.txt
+		 * video : liste de liste des rectangles détectés à enregistrer.
+		 * */
 		String line = "";
 		Path fichier = Paths.get(nom+".txt");
 		Charset charset = Charset.forName("US-ASCII");
@@ -75,6 +79,7 @@ public class Saving {
 				line += x + " " + y + " " + w + " " + h + " ";
 			}
 			line+="\n";
+			
 			// On écrit une ligne entière représentant une frame avant de l'écrire dans le
 			// fichier.
 			try (BufferedWriter buffer = Files.newBufferedWriter(fichier, charset)) {

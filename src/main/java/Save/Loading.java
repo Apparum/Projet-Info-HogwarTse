@@ -13,6 +13,9 @@ import java.util.List;
 public class Loading {
 
 	public static List<List<Rectangle>> charger(String nom) {
+		/* Fonction qui renvoit une liste de liste de Rectangles à partir d'un fichier dont le nom
+		 * est passé en argument.
+		 * */
 
 		Path fichier = Paths.get(nom+".txt");
 		Charset charset = Charset.forName("US-ASCII");

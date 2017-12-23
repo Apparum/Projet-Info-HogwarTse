@@ -4,6 +4,10 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,8 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
 import Detection.HOGDetection;
+import Save.Loading;
+import Save.Saving;
 
 @SuppressWarnings("unused")
 public class VideoReader {
@@ -29,6 +35,7 @@ public class VideoReader {
 	private HOGDetection hog = new HOGDetection();
 	final Scalar rectColor = new Scalar(0, 255, 0);
 	private List<List<Rectangle>> rects = new ArrayList<>();
+	private String nomVideo;
 
 	private int frameoff = 1;
 	private boolean hogVisibility = true;
@@ -40,6 +47,13 @@ public class VideoReader {
 
 	public VideoReader(String path) {
 		this.path = path;
+		String[] pathSplit = path.split("\\\\");
+		System.out.print(path + "\n");
+		nomVideo = pathSplit[pathSplit.length - 1];
+		System.out.println(nomVideo);
+		nomVideo = nomVideo.substring(0, nomVideo.lastIndexOf("."));
+		System.out.print(nomVideo + "\n");
+
 	}
 
 	public void init() {
@@ -51,19 +65,39 @@ public class VideoReader {
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
 
+		Path fichier = Paths.get(nomVideo + ".txt");
+		Charset charset = Charset.forName("US-ASCII");
+		boolean dejaVu = Files.exists(fichier);
+
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-			if ((currentFrame % this.frameoff) == 0) {
-				List<Rectangle> detected = this.hog.detect(frame);
-				this.rects.add(detected);
-				this.nbPerFrame.add(detected.size());
-			} else {
-				this.rects.add(new ArrayList<Rectangle>());
+			// On ne fait la détection que si on n'a pas le fichier correspondant.
+			if (!dejaVu) {
+				if ((currentFrame % this.frameoff) == 0) {
+					List<Rectangle> detected = this.hog.detect(frame);
+					this.rects.add(detected);
+					this.nbPerFrame.add(detected.size());
+				} else {
+					this.rects.add(new ArrayList<Rectangle>());
+				}
 			}
 			this.framesClone.add(frame.clone());
 			currentFrame += 1;
 		}
-		this.rects = this.interpolation(this.rects);
+		
+		// On charge les rectangles si le fichier existe(déjà interpollé).
+		if (dejaVu) {
+			rects = Loading.charger(nomVideo);
+			for (List<Rectangle> image : rects) {
+				nbPerFrame.add(image.size());
+			}
+		} 
+		// Sinon on interpole ceux calculés dans la boucle while.
+		else {
+			this.rects = this.interpolation(this.rects);
+			Saving.sauvegarder(nomVideo, rects);
+		}
+
 		int nbFrame = 0;
 		for (Mat matFrame : this.framesClone) {
 			if (this.hogVisibility) {
@@ -76,6 +110,7 @@ public class VideoReader {
 			this.frames.add(matFrame.clone());
 			nbFrame += 1;
 		}
+
 		System.out.println("Loading completed !");
 	}
 
