@@ -1,45 +1,28 @@
 package Graphic;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
+import java.awt.Button;
 import java.awt.Canvas;
-import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Dimension;
-
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileSystemView;
-
-import org.opencv.videoio.VideoCapture;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.awt.event.ActionEvent;
-import javax.swing.JPanel;
-import java.awt.Button;
-import javax.swing.JLabel;
-import java.awt.Label;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import Graphic.VideoScreen;
-import java.awt.TextArea;
+import java.awt.Label;
 import java.awt.TextField;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.Checkbox;
-import java.awt.event.TextListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.TextEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
+import java.awt.event.TextListener;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.filechooser.FileSystemView;
 
 @SuppressWarnings("unused")
 public class StartingScreen {
@@ -66,6 +49,26 @@ public class StartingScreen {
 	 */
 	public StartingScreen() {
 		this.initialize();
+	}
+
+	public void setFrameSize(Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public Dimension getFrameSize() {
+		return this.frame.getSize();
+	}
+
+	public int getX() {
+		return this.frame.getX();
+	}
+
+	public int getY() {
+		return this.frame.getY();
+	}
+
+	public void setLocation(int x, int y) {
+		this.frame.setLocation(x, y);
 	}
 
 	/**
@@ -99,6 +102,7 @@ public class StartingScreen {
 		Checkbox HOGVisibilityCheckbox = new Checkbox("");
 		HOGVisibilityCheckbox.setState(true);
 		HOGVisibilityCheckbox.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				e.getStateChange();
 				if (e.getStateChange() == 1) {
@@ -114,6 +118,7 @@ public class StartingScreen {
 
 		TextField indiceTextField = new TextField();
 		indiceTextField.addTextListener(new TextListener() {
+			@Override
 			public void textValueChanged(TextEvent e) {
 				if (indiceTextField.getText().matches("^[0-9]+$")) {
 					StartingScreen.this.setFrameoff(Integer.parseInt(indiceTextField.getText()));
@@ -188,6 +193,7 @@ public class StartingScreen {
 		this.frame.getContentPane().add(browserRectBorder);
 
 		browserButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				final int returnValue = jfc.showOpenDialog(null);
@@ -202,6 +208,7 @@ public class StartingScreen {
 		});
 
 		playButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (StartingScreen.this.fileChoosed == false) {
 					browserLabel.setBackground(Color.RED);

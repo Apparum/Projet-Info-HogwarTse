@@ -14,10 +14,8 @@ import java.util.List;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.video.Video;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
@@ -48,12 +46,8 @@ public class VideoReader {
 	public VideoReader(String path) {
 		this.path = path;
 		String[] pathSplit = path.split("\\\\");
-		System.out.print(path + "\n");
-		nomVideo = pathSplit[pathSplit.length - 1];
-		System.out.println(nomVideo);
-		nomVideo = nomVideo.substring(0, nomVideo.lastIndexOf("."));
-		System.out.print(nomVideo + "\n");
-
+		this.nomVideo = pathSplit[pathSplit.length - 1];
+		this.nomVideo = this.nomVideo.substring(0, this.nomVideo.lastIndexOf("."));
 	}
 
 	public void init() {
@@ -65,7 +59,7 @@ public class VideoReader {
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
 
-		Path fichier = Paths.get(nomVideo + ".txt");
+		Path fichier = Paths.get(this.nomVideo + ".txt");
 		Charset charset = Charset.forName("US-ASCII");
 		boolean dejaVu = Files.exists(fichier);
 
@@ -84,20 +78,19 @@ public class VideoReader {
 			this.framesClone.add(frame.clone());
 			currentFrame += 1;
 		}
-		
 		// On charge les rectangles si le fichier existe(déjà interpollé).
 		if (dejaVu) {
-			rects = Loading.charger(nomVideo);
-			for (List<Rectangle> image : rects) {
-				nbPerFrame.add(image.size());
+			System.out.println("The video was already in memory");
+			this.rects = Loading.charger(this.nomVideo);
+			for (List<Rectangle> image : this.rects) {
+				this.nbPerFrame.add(image.size());
 			}
-		} 
+		}
 		// Sinon on interpole ceux calculés dans la boucle while.
 		else {
 			this.rects = this.interpolation(this.rects);
-			Saving.sauvegarder(nomVideo, rects);
+			Saving.sauvegarder(this.nomVideo, this.rects);
 		}
-
 		int nbFrame = 0;
 		for (Mat matFrame : this.framesClone) {
 			if (this.hogVisibility) {

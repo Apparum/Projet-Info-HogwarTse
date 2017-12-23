@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
 import java.awt.Rectangle;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
@@ -32,9 +35,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import Video.VideoReader;
-import java.awt.TextField;
-import java.awt.event.TextListener;
-import java.awt.event.TextEvent;
 
 public class VideoScreen {
 
@@ -118,6 +118,26 @@ public class VideoScreen {
 		this.initialize();
 	}
 
+	public void setFrameSize(Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public Dimension getFrameSize() {
+		return this.frame.getSize();
+	}
+
+	public int getX() {
+		return this.frame.getX();
+	}
+
+	public int getY() {
+		return this.frame.getY();
+	}
+
+	public void setLocation(int x, int y) {
+		this.frame.setLocation(x, y);
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -155,6 +175,7 @@ public class VideoScreen {
 
 		Button nextButton = new Button("Next");
 		nextButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if ((VideoScreen.this.currentFrame + 5) < VideoScreen.this.video.size()) {
 					VideoScreen.this.moveFrame(5);
@@ -166,6 +187,7 @@ public class VideoScreen {
 
 		Button previousButton = new Button("Previous");
 		previousButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if ((VideoScreen.this.currentFrame - 5) > 0) {
 					VideoScreen.this.moveFrame(-5);
@@ -177,6 +199,7 @@ public class VideoScreen {
 
 		Button playButton = new Button("Play/Pause");
 		playButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (VideoScreen.this.isPlay()) {
 					VideoScreen.this.setPlay(false);
@@ -222,6 +245,7 @@ public class VideoScreen {
 
 		TextField gotoTextField = new TextField();
 		gotoTextField.addTextListener(new TextListener() {
+			@Override
 			public void textValueChanged(TextEvent arg0) {
 				if (gotoTextField.getText().matches("^[0-9]+$")
 						&& (Integer.parseInt(gotoTextField.getText()) < VideoScreen.this.video.size())) {
@@ -259,6 +283,7 @@ public class VideoScreen {
 				VideoScreen.this.zoneModif.y = (int) (e.getY() / ylen);
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
 				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;

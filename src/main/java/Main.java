@@ -18,6 +18,8 @@ public class Main {
 	public void init() throws InterruptedException {
 		while (true) {
 			if (this.goToStartingScreen == true) {
+				this.startingScreen.setFrameSize(this.videoScreen.getFrameSize());
+				this.videoScreen.setLocation(this.startingScreen.getX(), this.startingScreen.getY());
 				this.startingScreen.setVisible(true);
 				this.videoScreen.setVisible(false);
 				this.statScreen.setVisible(false);
@@ -32,6 +34,8 @@ public class Main {
 				this.startingScreen.setSetupVideoReader(false);
 			}
 			if (this.goToVideoScreen == true) {
+				this.videoScreen.setFrameSize(this.startingScreen.getFrameSize());
+				this.videoScreen.setLocation(this.startingScreen.getX(), this.startingScreen.getY());
 				this.videoScreen.setVisible(true);
 				this.startingScreen.setVisible(false);
 				this.statScreen.setVisible(false);
@@ -39,6 +43,8 @@ public class Main {
 				this.statScreen.setGoToVideo(false);
 			}
 			if (this.goToStatScreen == true) {
+				this.statScreen.setFrameSize(this.videoScreen.getFrameSize());
+				this.statScreen.setLocation(this.startingScreen.getX(), this.startingScreen.getY());
 				this.statScreen.setVisible(true);
 				this.startingScreen.setVisible(false);
 				this.videoScreen.setVisible(false);
