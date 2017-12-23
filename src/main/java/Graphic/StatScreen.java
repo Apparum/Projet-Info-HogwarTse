@@ -59,6 +59,26 @@ public class StatScreen {
 		this.initialize();
 	}
 
+	public void setFrameSize(Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public Dimension getFrameSize() {
+		return this.frame.getSize();
+	}
+
+	public int getX() {
+		return this.frame.getX();
+	}
+
+	public int getY() {
+		return this.frame.getY();
+	}
+
+	public void setLocation(int x, int y) {
+		this.frame.setLocation(x, y);
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -103,6 +123,7 @@ public class StatScreen {
 
 		Button nextButton = new Button("Local");
 		nextButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				StatScreen.this.local = true;
 				StatScreen.this.global = false;
@@ -114,6 +135,7 @@ public class StatScreen {
 
 		Button previousButton = new Button("Global");
 		previousButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				StatScreen.this.global = true;
 				StatScreen.this.local = false;
@@ -125,6 +147,7 @@ public class StatScreen {
 
 		Button playButton = new Button("TO DO");
 		playButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
@@ -140,6 +163,7 @@ public class StatScreen {
 
 		TextField rectTextField = new TextField();
 		rectTextField.addTextListener(new TextListener() {
+			@Override
 			public void textValueChanged(TextEvent arg0) {
 				if (rectTextField.getText().matches("^[0-9]+$") && (Integer.parseInt(rectTextField.getText()) > 0)
 						&& (Integer.parseInt(rectTextField.getText()) < (StatScreen.this.rects.size() + 1))) {
