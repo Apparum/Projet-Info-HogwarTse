@@ -170,7 +170,6 @@ public class VideoReader {
 	}
 
 	public List<List<Rectangle>> getRectPeoplePerFrame() {
-
 		return this.rects;
 	}
 

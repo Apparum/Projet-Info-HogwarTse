@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.Rectangle;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,11 +15,14 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
 
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
 import Stats.Histogramme;
@@ -36,6 +40,9 @@ public class StatScreen {
 	double[][] data = new double[1][this.NbPerFrame.size()];
 	private List<Rect> rects = new ArrayList<>();
 	private List<List<Rectangle>> rectPeople = new ArrayList<>();
+	boolean global = true;
+	boolean local = false;
+	int selectedRect = 1;
 
 	/**
 	 * Launch the application.
@@ -94,19 +101,23 @@ public class StatScreen {
 		videoLabel.setBounds(50, 522, 134, 40);
 		this.frame.getContentPane().add(videoLabel);
 
-		Button nextButton = new Button("TO DO");
+		Button nextButton = new Button("Local");
 		nextButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
+				StatScreen.this.local = true;
+				StatScreen.this.global = false;
+				StatScreen.this.refresh();
 			}
 		});
 		nextButton.setBounds(530, 522, 79, 24);
 		this.frame.getContentPane().add(nextButton);
 
-		Button previousButton = new Button("TO DO");
+		Button previousButton = new Button("Global");
 		previousButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
+				StatScreen.this.global = true;
+				StatScreen.this.local = false;
+				StatScreen.this.refresh();
 			}
 		});
 		previousButton.setBounds(279, 522, 79, 24);
@@ -115,11 +126,32 @@ public class StatScreen {
 		Button playButton = new Button("TO DO");
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-
 			}
 		});
 		playButton.setBounds(404, 522, 79, 24);
 		this.frame.getContentPane().add(playButton);
+
+		Label rectLabel = new Label("Rectangle n° : ");
+		rectLabel.setForeground(Color.WHITE);
+		rectLabel.setFont(null);
+		rectLabel.setAlignment(Label.RIGHT);
+		rectLabel.setBounds(540, 555, 102, 24);
+		this.frame.getContentPane().add(rectLabel);
+
+		TextField rectTextField = new TextField();
+		rectTextField.addTextListener(new TextListener() {
+			public void textValueChanged(TextEvent arg0) {
+				if (rectTextField.getText().matches("^[0-9]+$") && (Integer.parseInt(rectTextField.getText()) > 0)
+						&& (Integer.parseInt(rectTextField.getText()) < (StatScreen.this.rects.size() + 1))) {
+					StatScreen.this.selectedRect = Integer.parseInt(rectTextField.getText());
+					StatScreen.this.refresh();
+				} else {
+					rectTextField.setText("");
+				}
+			}
+		});
+		rectTextField.setBounds(641, 555, 24, 24);
+		this.frame.getContentPane().add(rectTextField);
 
 		menuLabel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -145,6 +177,8 @@ public class StatScreen {
 				StatScreen.this.panel.setBounds((int) (50 * xlen), (int) (37 * ylen), (int) (824 * xlen),
 						(int) (465 * ylen));
 				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
+				rectLabel.setBounds((int) (540 * xlen), (int) (555 * ylen), (int) (102 * xlen), (int) (24 * ylen));
+				rectTextField.setBounds((int) (641 * xlen), (int) (555 * ylen), (int) (24 * xlen), (int) (24 * ylen));
 				videoLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
@@ -170,11 +204,34 @@ public class StatScreen {
 		this.setData(data);
 	}
 
+	public void setNbPerRectIntoData(int rectIndice) {
+		rectIndice -= 1;
+		double[][] data = new double[1][this.NbPerFrame.size()];
+		for (int i = 0; i < this.NbPerFrame.size(); i++) {
+			for (int j = 0; j < this.NbPerFrame.get(i); j++) {
+				if ((this.rects.size() > 0) && (this.rectPeople.get(i).size() > 0)
+						&& this.center(this.rectPeople.get(i).get(j)).inside(this.rects.get(rectIndice))) {
+					data[0][i] += 1;
+				}
+			}
+		}
+		this.setData(data);
+	}
+
+	public Point center(Rectangle rectangle) {
+		return new Point(rectangle.getCenterX(), rectangle.getCenterY());
+	}
+
 	public void refresh() {
 		this.frameLabel.setText("Frame : " + this.currentFrame + "/" + (this.size - 1));
-		this.setNbPerFrameIntoData();
 		this.panel.removeAll();
-		new Histogramme("Nb de personne", this.panel, this.data);
+		if (this.global) {
+			this.setNbPerFrameIntoData();
+			new Histogramme("Nombre de personnes", this.panel, this.data);
+		} else if (this.local) {
+			this.setNbPerRectIntoData(this.selectedRect);
+			new Histogramme("Nombre de personnes dans rectangle n°" + this.selectedRect, this.panel, this.data);
+		}
 	}
 
 	public boolean isGoToMenu() {

@@ -253,18 +253,30 @@ public class VideoScreen {
 		this.contentLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				double[] pt = new double[2];
-				pt[0] = e.getX();
-				pt[1] = e.getY();
-				VideoScreen.this.zoneModif.set(pt);
+				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
+				VideoScreen.this.zoneModif.x = (int) (e.getX() / xlen);
+				VideoScreen.this.zoneModif.y = (int) (e.getY() / ylen);
 			}
 
 			public void mouseReleased(MouseEvent e) {
+				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
 				double[] pt = new double[2];
-				pt[0] = e.getX();
-				pt[1] = e.getY();
-				VideoScreen.this.zoneModif.width = e.getX() - VideoScreen.this.zoneModif.x;
-				VideoScreen.this.zoneModif.height = e.getY() - VideoScreen.this.zoneModif.y;
+				pt[0] = e.getX() / xlen;
+				pt[1] = e.getY() / ylen;
+				if (pt[0] < VideoScreen.this.zoneModif.x) {
+					double tmp = VideoScreen.this.zoneModif.x;
+					VideoScreen.this.zoneModif.x = (int) pt[0];
+					pt[0] = tmp;
+				}
+				if (pt[1] < VideoScreen.this.zoneModif.y) {
+					double tmp = VideoScreen.this.zoneModif.y;
+					VideoScreen.this.zoneModif.y = (int) pt[1];
+					pt[1] = tmp;
+				}
+				VideoScreen.this.zoneModif.width = (int) ((pt[0]) - VideoScreen.this.zoneModif.x);
+				VideoScreen.this.zoneModif.height = (int) ((pt[1]) - VideoScreen.this.zoneModif.y);
 				VideoScreen.this.rects.add(VideoScreen.this.zoneModif);
 				rectList.add(VideoScreen.this.zoneModif.toString());
 				VideoScreen.this.zoneModif = new Rect();
@@ -292,21 +304,23 @@ public class VideoScreen {
 				VideoScreen.this.refresh();
 			}
 		});
-
 	}
 
 	public void refresh() {
 		Mat tmp = this.video.getMat(this.currentFrame).clone();
 		for (int i = 0; i < this.rects.size(); i++) {
 			Rect rect = this.rects.get(i);
+			float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+			float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
 			float yRatio = (float) this.contentLabel.getHeight()
 					/ (float) this.video.getMat(this.currentFrame).height();
 			float xRatio = (float) this.contentLabel.getWidth() / (float) this.video.getMat(this.currentFrame).width();
-			this.rectPoint1.x = rect.x / xRatio;
-			this.rectPoint1.y = rect.y / yRatio;
-			this.rectPoint2.x = (rect.x / xRatio) + (rect.width / xRatio);
-			this.rectPoint2.y = (rect.y / yRatio) + (rect.height / yRatio);
+			this.rectPoint1.x = (rect.x / xRatio) * xlen;
+			this.rectPoint1.y = (rect.y / yRatio) * ylen;
+			this.rectPoint2.x = ((rect.x / xRatio) * xlen) + ((rect.width / xRatio) * xlen);
+			this.rectPoint2.y = ((rect.y / yRatio) * ylen) + ((rect.height / yRatio) * ylen);
 			Imgproc.rectangle(tmp, this.rectPoint1, this.rectPoint2, this.rectColor, 1);
+			Imgproc.putText(tmp, "Rectangle " + (i + 1), this.rectPoint1, 0, 0.3, new Scalar(0, 0, 0), 1);
 		}
 		final ImageIcon image = new ImageIcon(new ImageIcon(MatToBufferedImage(tmp)).getImage()
 				.getScaledInstance(this.contentLabel.getWidth(), this.contentLabel.getHeight(), Image.SCALE_SMOOTH));
