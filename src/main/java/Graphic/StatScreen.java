@@ -43,6 +43,8 @@ public class StatScreen {
 	boolean global = true;
 	boolean local = false;
 	int selectedRect = 1;
+	int frameLow = 0;
+	int frameUp = Integer.MAX_VALUE;
 
 	/**
 	 * Launch the application.
@@ -125,9 +127,11 @@ public class StatScreen {
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				StatScreen.this.local = true;
-				StatScreen.this.global = false;
-				StatScreen.this.refresh();
+				if (StatScreen.this.rects.size() > 0) {
+					StatScreen.this.local = true;
+					StatScreen.this.global = false;
+					StatScreen.this.refresh();
+				}
 			}
 		});
 		nextButton.setBounds(530, 522, 79, 24);
@@ -169,13 +173,55 @@ public class StatScreen {
 						&& (Integer.parseInt(rectTextField.getText()) < (StatScreen.this.rects.size() + 1))) {
 					StatScreen.this.selectedRect = Integer.parseInt(rectTextField.getText());
 					StatScreen.this.refresh();
-				} else {
-					rectTextField.setText("");
 				}
 			}
 		});
 		rectTextField.setBounds(641, 555, 24, 24);
 		this.frame.getContentPane().add(rectTextField);
+
+		Label frameLowLabel = new Label("From frame n°");
+		frameLowLabel.setBounds(190, 555, 102, 24);
+		this.frame.getContentPane().add(frameLowLabel);
+		frameLowLabel.setForeground(Color.WHITE);
+		frameLowLabel.setFont(null);
+		frameLowLabel.setAlignment(Label.RIGHT);
+
+		TextField frameLowTextField = new TextField();
+		frameLowTextField.addTextListener(new TextListener() {
+			@Override
+			public void textValueChanged(TextEvent arg0) {
+				if (frameLowTextField.getText().matches("^[0-9]+$")
+						&& (Integer.parseInt(frameLowTextField.getText()) > 0)
+						&& (Integer.parseInt(frameLowTextField.getText()) <= (StatScreen.this.frameUp))) {
+					StatScreen.this.frameLow = Integer.parseInt(frameLowTextField.getText());
+					StatScreen.this.refresh();
+				}
+			}
+		});
+		frameLowTextField.setBounds(289, 555, 24, 24);
+		this.frame.getContentPane().add(frameLowTextField);
+
+		Label frameUpLabel = new Label("to");
+		frameUpLabel.setForeground(Color.WHITE);
+		frameUpLabel.setFont(null);
+		frameUpLabel.setAlignment(Label.RIGHT);
+		frameUpLabel.setBounds(303, 555, 24, 24);
+		this.frame.getContentPane().add(frameUpLabel);
+
+		TextField frameUpTextField = new TextField();
+		frameUpTextField.addTextListener(new TextListener() {
+			@Override
+			public void textValueChanged(TextEvent arg0) {
+				if (frameUpTextField.getText().matches("^[0-9]+$")
+						&& (Integer.parseInt(frameUpTextField.getText()) >= StatScreen.this.frameLow)
+						&& (Integer.parseInt(frameUpTextField.getText()) < (StatScreen.this.size))) {
+					StatScreen.this.frameUp = Integer.parseInt(frameUpTextField.getText()) + 1;
+					StatScreen.this.refresh();
+				}
+			}
+		});
+		frameUpTextField.setBounds(328, 555, 24, 24);
+		this.frame.getContentPane().add(frameUpTextField);
 
 		menuLabel.addMouseListener(new MouseAdapter() {
 			@Override
@@ -203,6 +249,12 @@ public class StatScreen {
 				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				rectLabel.setBounds((int) (540 * xlen), (int) (555 * ylen), (int) (102 * xlen), (int) (24 * ylen));
 				rectTextField.setBounds((int) (641 * xlen), (int) (555 * ylen), (int) (24 * xlen), (int) (24 * ylen));
+				frameLowLabel.setBounds((int) (190 * xlen), (int) (555 * ylen), (int) (102 * xlen), (int) (24 * ylen));
+				frameLowTextField.setBounds((int) (289 * xlen), (int) (555 * ylen), (int) (24 * xlen),
+						(int) (24 * ylen));
+				frameUpLabel.setBounds((int) (303 * xlen), (int) (555 * ylen), (int) (24 * xlen), (int) (24 * ylen));
+				frameUpTextField.setBounds((int) (328 * xlen), (int) (555 * ylen), (int) (24 * xlen),
+						(int) (24 * ylen));
 				videoLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
@@ -220,21 +272,23 @@ public class StatScreen {
 		this.data = data;
 	}
 
-	public void setNbPerFrameIntoData() {
-		double[][] data = new double[1][this.NbPerFrame.size()];
-		for (int i = 0; i < this.NbPerFrame.size(); i++) {
-			data[0][i] = this.NbPerFrame.get(i);
+	public void setNbPerFrameIntoData(int Ilow, int Iup) {
+		int range = Iup - Ilow;
+		double[][] data = new double[1][range];
+		for (int i = 0; i < range; i++) {
+			data[0][i] = this.NbPerFrame.get(Ilow + i);
 		}
 		this.setData(data);
 	}
 
-	public void setNbPerRectIntoData(int rectIndice) {
+	public void setNbPerRectIntoData(int rectIndice, int Ilow, int Iup) {
 		rectIndice -= 1;
-		double[][] data = new double[1][this.NbPerFrame.size()];
-		for (int i = 0; i < this.NbPerFrame.size(); i++) {
-			for (int j = 0; j < this.NbPerFrame.get(i); j++) {
-				if ((this.rects.size() > 0) && (this.rectPeople.get(i).size() > 0)
-						&& this.center(this.rectPeople.get(i).get(j)).inside(this.rects.get(rectIndice))) {
+		int range = Iup - Ilow;
+		double[][] data = new double[1][range];
+		for (int i = 0; i < range; i++) {
+			for (int j = 0; j < this.NbPerFrame.get(Ilow + i); j++) {
+				if ((this.rects.size() > 0) && (this.rectPeople.get(Ilow + i).size() > 0)
+						&& this.center(this.rectPeople.get(Ilow + i).get(j)).inside(this.rects.get(rectIndice))) {
 					data[0][i] += 1;
 				}
 			}
@@ -250,10 +304,10 @@ public class StatScreen {
 		this.frameLabel.setText("Frame : " + this.currentFrame + "/" + (this.size - 1));
 		this.panel.removeAll();
 		if (this.global) {
-			this.setNbPerFrameIntoData();
+			this.setNbPerFrameIntoData(this.frameLow, this.frameUp);
 			new Histogramme("Nombre de personnes", this.panel, this.data);
 		} else if (this.local) {
-			this.setNbPerRectIntoData(this.selectedRect);
+			this.setNbPerRectIntoData(this.selectedRect, this.frameLow, this.frameUp);
 			new Histogramme("Nombre de personnes dans rectangle n°" + this.selectedRect, this.panel, this.data);
 		}
 	}
@@ -279,6 +333,9 @@ public class StatScreen {
 	}
 
 	public void setSize(int size) {
+		if (this.frameUp > size) {
+			this.frameUp = size;
+		}
 		this.size = size;
 	}
 

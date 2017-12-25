@@ -252,7 +252,7 @@ public class StartingScreen {
 		});
 	}
 
-	protected void setHogVisible(boolean b) {
+	public void setHogVisible(boolean b) {
 		this.hogVisibility = b;
 	}
 
