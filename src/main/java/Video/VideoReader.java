@@ -27,6 +27,7 @@ import Save.Saving;
 @SuppressWarnings("unused")
 public class VideoReader {
 
+	private List<List<Integer>> listLabel = new ArrayList<>();
 	private VideoCapture video;
 	private List<Mat> frames = new ArrayList<>();
 	private List<Mat> framesClone = new ArrayList<>();
@@ -56,7 +57,7 @@ public class VideoReader {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		final Mat frame = new Mat();
 		this.video = new VideoCapture(this.path);
-		//this.video.read(frame);
+		// this.video.read(frame);
 		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
@@ -104,7 +105,7 @@ public class VideoReader {
 
 		////////// KALMAN /////////////
 		else {
-			
+
 			try {
 				rects = MainKalman.process(video);
 				System.out.println("Ca marche !");
@@ -122,13 +123,18 @@ public class VideoReader {
 			}
 		}
 		///////////////////////
-		int nbFrame = 0;
+		this.labellisation();
+		int nbFrame = 0, compteurRect = 0;
 		for (Mat matFrame : this.framesClone) {
 			if (this.hogVisibility) {
 				for (final Rectangle rectangle : this.rects.get(nbFrame)) {
 					Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
 							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor,
 							1);
+					Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
+							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
+							Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
+					compteurRect++;
 				}
 			}
 			this.frames.add(matFrame.clone());
@@ -176,6 +182,45 @@ public class VideoReader {
 			compteur += 1;
 		}
 		return listImg;
+	}
+
+	private void labellisation() {
+		int maxLabel = 0, indiceMax = 0, compteur = 0;
+		double maxArea = 0;
+		List<Integer> listInter = new ArrayList<>();
+		for (int j = 0; j < this.rects.get(0).size(); j++) {
+			listInter.add(maxLabel);
+			maxLabel++;
+		}
+		listLabel.add(listInter);
+		listInter.clear();
+		for (int k = 1; k < rects.size(); k++) {
+			List<Integer> listInter1 = new ArrayList<>();
+			for (Rectangle actualRect : this.rects.get(k)) {
+				System.out.println(this.listLabel);
+				System.out.println(listInter1);
+				for (Rectangle nextRect : this.rects.get(k - 1)) {
+					if (this.getArea(actualRect.intersection(nextRect)) > maxArea) {
+						maxArea = this.getArea(actualRect.intersection(nextRect));
+						indiceMax = compteur;
+					}
+					compteur++;
+				}
+				if (maxArea > this.getArea(actualRect) / 2) {
+					listInter1.add(this.listLabel.get(k - 1).get(indiceMax));
+				} else {
+					listInter1.add(maxLabel);
+					maxLabel++;
+				}
+			}
+			indiceMax = 0;
+			maxArea = 0;
+			listLabel.add(listInter1);
+		}
+	}
+
+	private double getArea(Rectangle rect) {
+		return rect.getWidth() * rect.getHeight();
 	}
 
 	private Rectangle rectangleAvg(Rectangle rect1, Rectangle rect2) {
