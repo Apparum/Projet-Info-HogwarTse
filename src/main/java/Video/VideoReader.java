@@ -20,6 +20,7 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
 import Detection.HOGDetection;
+import Detection.MainKalman;
 import Save.Loading;
 import Save.Saving;
 
@@ -31,6 +32,7 @@ public class VideoReader {
 	private List<Mat> framesClone = new ArrayList<>();
 	private String path;
 	private HOGDetection hog = new HOGDetection();
+	private MainKalman kalman = new MainKalman();
 	final Scalar rectColor = new Scalar(0, 255, 0);
 	private List<List<Rectangle>> rects = new ArrayList<>();
 	private String nomVideo;
@@ -54,43 +56,72 @@ public class VideoReader {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		final Mat frame = new Mat();
 		this.video = new VideoCapture(this.path);
-		this.video.read(frame);
+		//this.video.read(frame);
 		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
 
-		Path fichier = Paths.get(this.nomVideo + ".txt");
-		Charset charset = Charset.forName("US-ASCII");
-		boolean dejaVu = Files.exists(fichier);
+		/*
+		 * Path fichier = Paths.get(this.nomVideo + ".txt"); Charset charset =
+		 * Charset.forName("US-ASCII"); boolean dejaVu = Files.exists(fichier);
+		 */
+		boolean dejaVu = false;
+		boolean hog = false;
+		///////////// HOG////////////////
 
-		while (this.video.read(frame)) {
-			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-			// On ne fait la détection que si on n'a pas le fichier correspondant.
-			if (!dejaVu) {
-				if ((currentFrame % this.frameoff) == 0) {
-					List<Rectangle> detected = this.hog.detect(frame);
-					this.rects.add(detected);
-					this.nbPerFrame.add(detected.size());
-				} else {
-					this.rects.add(new ArrayList<Rectangle>());
+		if (hog) {
+			while (this.video.read(frame)) {
+				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
+				// On ne fait la détection que si on n'a pas le fichier correspondant.
+				if (!dejaVu) {
+					if ((currentFrame % this.frameoff) == 0) {
+						List<Rectangle> detected = this.hog.detect(frame);
+						this.rects.add(detected);
+						this.nbPerFrame.add(detected.size());
+					} else {
+						this.rects.add(new ArrayList<Rectangle>());
+					}
+				}
+				this.framesClone.add(frame.clone());
+				currentFrame += 1;
+			}
+			// On charge les rectangles si le fichier existe(déjà interpollé).
+			if (dejaVu) {
+				System.out.println("The video was already in memory");
+				this.rects = Loading.charger(this.nomVideo);
+				for (List<Rectangle> image : this.rects) {
+					this.nbPerFrame.add(image.size());
 				}
 			}
-			this.framesClone.add(frame.clone());
-			currentFrame += 1;
-		}
-		// On charge les rectangles si le fichier existe(déjà interpollé).
-		if (dejaVu) {
-			System.out.println("The video was already in memory");
-			this.rects = Loading.charger(this.nomVideo);
-			for (List<Rectangle> image : this.rects) {
-				this.nbPerFrame.add(image.size());
+			// Sinon on interpole ceux calculés dans la boucle while.
+			else {
+				this.rects = this.interpolation(this.rects);
+				Saving.sauvegarder(this.nomVideo, this.rects);
 			}
 		}
-		// Sinon on interpole ceux calculés dans la boucle while.
+
+		///////////////////////////
+
+		////////// KALMAN /////////////
 		else {
-			this.rects = this.interpolation(this.rects);
-			Saving.sauvegarder(this.nomVideo, this.rects);
+			
+			try {
+				rects = MainKalman.process(video);
+				System.out.println("Ca marche !");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.out.println("On est dans la merde !!!");
+			}
+			this.video = new VideoCapture(this.path);
+			while (this.video.read(frame)) {
+				this.framesClone.add(frame.clone());
+			}
+
+			for (int k = 0; k < rects.size(); k++) {
+				this.nbPerFrame.add(rects.get(k).size());
+			}
 		}
+		///////////////////////
 		int nbFrame = 0;
 		for (Mat matFrame : this.framesClone) {
 			if (this.hogVisibility) {

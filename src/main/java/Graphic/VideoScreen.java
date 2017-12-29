@@ -157,7 +157,7 @@ public class VideoScreen {
 		this.contentLabel.setBounds(50, 31, 750, 465);
 		this.frame.getContentPane().add(this.contentLabel);
 
-		Label menuLabel = new Label("Menu");
+		final Label menuLabel = new Label("Menu");
 		menuLabel.setForeground(new Color(255, 255, 255));
 		menuLabel.setFont(new Font("Castellar", Font.PLAIN, 22));
 		menuLabel.setBackground(new Color(89, 131, 146));
@@ -165,7 +165,7 @@ public class VideoScreen {
 		menuLabel.setBounds(740, 522, 134, 40);
 		this.frame.getContentPane().add(menuLabel);
 
-		Label statLabel = new Label("Stats");
+		final Label statLabel = new Label("Stats");
 		statLabel.setForeground(new Color(255, 255, 255));
 		statLabel.setFont(new Font("Castellar", Font.PLAIN, 22));
 		statLabel.setBackground(new Color(89, 131, 146));
@@ -173,7 +173,7 @@ public class VideoScreen {
 		statLabel.setBounds(50, 522, 134, 40);
 		this.frame.getContentPane().add(statLabel);
 
-		Button nextButton = new Button("Next");
+		final Button nextButton = new Button("Next");
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -185,7 +185,7 @@ public class VideoScreen {
 		nextButton.setBounds(530, 522, 79, 24);
 		this.frame.getContentPane().add(nextButton);
 
-		Button previousButton = new Button("Previous");
+		final Button previousButton = new Button("Previous");
 		previousButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -197,7 +197,7 @@ public class VideoScreen {
 		previousButton.setBounds(279, 522, 79, 24);
 		this.frame.getContentPane().add(previousButton);
 
-		Button playButton = new Button("Play/Pause");
+		final Button playButton = new Button("Play/Pause");
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -217,7 +217,7 @@ public class VideoScreen {
 		this.frameLabel.setBounds(358, 555, 176, 24);
 		this.frame.getContentPane().add(this.frameLabel);
 
-		java.awt.List rectList = new java.awt.List();
+		final java.awt.List rectList = new java.awt.List();
 		rectList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -236,14 +236,14 @@ public class VideoScreen {
 		rectList.setBounds(806, 31, 108, 465);
 		this.frame.getContentPane().add(rectList);
 
-		Label gotoLabel = new Label("Go To Frame : ");
+		final Label gotoLabel = new Label("Go To Frame : ");
 		gotoLabel.setForeground(Color.WHITE);
 		gotoLabel.setFont(null);
 		gotoLabel.setAlignment(Label.RIGHT);
 		gotoLabel.setBounds(540, 555, 102, 24);
 		this.frame.getContentPane().add(gotoLabel);
 
-		TextField gotoTextField = new TextField();
+		final TextField gotoTextField = new TextField();
 		gotoTextField.addTextListener(new TextListener() {
 			@Override
 			public void textValueChanged(TextEvent arg0) {

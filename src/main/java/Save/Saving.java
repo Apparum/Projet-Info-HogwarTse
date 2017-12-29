@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.opencv.core.Rect;
 
+@SuppressWarnings("unused")
 public class Saving {
 
 	public static void main(String[] s) {

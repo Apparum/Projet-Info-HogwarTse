@@ -107,7 +107,7 @@ public class StatScreen {
 		this.frameLabel.setBounds(358, 555, 176, 24);
 		this.frame.getContentPane().add(this.frameLabel);
 
-		Label menuLabel = new Label("Menu");
+		final Label menuLabel = new Label("Menu");
 		menuLabel.setForeground(new Color(255, 255, 255));
 		menuLabel.setFont(new Font("Castellar", Font.PLAIN, 22));
 		menuLabel.setBackground(new Color(89, 131, 146));
@@ -115,7 +115,7 @@ public class StatScreen {
 		menuLabel.setBounds(740, 522, 134, 40);
 		this.frame.getContentPane().add(menuLabel);
 
-		Label videoLabel = new Label("Video");
+		final Label videoLabel = new Label("Video");
 		videoLabel.setForeground(new Color(255, 255, 255));
 		videoLabel.setFont(new Font("Castellar", Font.PLAIN, 22));
 		videoLabel.setBackground(new Color(89, 131, 146));
@@ -123,7 +123,7 @@ public class StatScreen {
 		videoLabel.setBounds(50, 522, 134, 40);
 		this.frame.getContentPane().add(videoLabel);
 
-		Button nextButton = new Button("Local");
+		final Button nextButton = new Button("Local");
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -137,7 +137,7 @@ public class StatScreen {
 		nextButton.setBounds(530, 522, 79, 24);
 		this.frame.getContentPane().add(nextButton);
 
-		Button previousButton = new Button("Global");
+		final Button previousButton = new Button("Global");
 		previousButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -149,7 +149,7 @@ public class StatScreen {
 		previousButton.setBounds(279, 522, 79, 24);
 		this.frame.getContentPane().add(previousButton);
 
-		Button playButton = new Button("TO DO");
+		final Button playButton = new Button("TO DO");
 		playButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -158,14 +158,14 @@ public class StatScreen {
 		playButton.setBounds(404, 522, 79, 24);
 		this.frame.getContentPane().add(playButton);
 
-		Label rectLabel = new Label("Rectangle n° : ");
+		final Label rectLabel = new Label("Rectangle n° : ");
 		rectLabel.setForeground(Color.WHITE);
 		rectLabel.setFont(null);
 		rectLabel.setAlignment(Label.RIGHT);
 		rectLabel.setBounds(540, 555, 102, 24);
 		this.frame.getContentPane().add(rectLabel);
 
-		TextField rectTextField = new TextField();
+		final TextField rectTextField = new TextField();
 		rectTextField.addTextListener(new TextListener() {
 			@Override
 			public void textValueChanged(TextEvent arg0) {
@@ -179,14 +179,14 @@ public class StatScreen {
 		rectTextField.setBounds(641, 555, 24, 24);
 		this.frame.getContentPane().add(rectTextField);
 
-		Label frameLowLabel = new Label("From frame n°");
+		final Label frameLowLabel = new Label("From frame n°");
 		frameLowLabel.setBounds(190, 555, 102, 24);
 		this.frame.getContentPane().add(frameLowLabel);
 		frameLowLabel.setForeground(Color.WHITE);
 		frameLowLabel.setFont(null);
 		frameLowLabel.setAlignment(Label.RIGHT);
 
-		TextField frameLowTextField = new TextField();
+		final TextField frameLowTextField = new TextField();
 		frameLowTextField.addTextListener(new TextListener() {
 			@Override
 			public void textValueChanged(TextEvent arg0) {
@@ -201,14 +201,14 @@ public class StatScreen {
 		frameLowTextField.setBounds(289, 555, 24, 24);
 		this.frame.getContentPane().add(frameLowTextField);
 
-		Label frameUpLabel = new Label("to");
+		final Label frameUpLabel = new Label("to");
 		frameUpLabel.setForeground(Color.WHITE);
 		frameUpLabel.setFont(null);
 		frameUpLabel.setAlignment(Label.RIGHT);
 		frameUpLabel.setBounds(303, 555, 24, 24);
 		this.frame.getContentPane().add(frameUpLabel);
 
-		TextField frameUpTextField = new TextField();
+		final TextField frameUpTextField = new TextField();
 		frameUpTextField.addTextListener(new TextListener() {
 			@Override
 			public void textValueChanged(TextEvent arg0) {
