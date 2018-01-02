@@ -207,6 +207,7 @@ public class VideoReader {
 					compteur++;
 				}
 				if (maxArea > this.getArea(actualRect) / 2) {
+					System.out.println();
 					listInter1.add(this.listLabel.get(k - 1).get(indiceMax));
 				} else {
 					listInter1.add(maxLabel);
