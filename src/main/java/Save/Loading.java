@@ -10,37 +10,43 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * Chargement d'une détection de personne.
+ *
+ */
 public class Loading {
 
-	public static List<List<Rectangle>> charger(String nom) {
-		/* Fonction qui renvoit une liste de liste de Rectangles à partir d'un fichier dont le nom
-		 * est passé en argument.
-		 * */
-
-		Path fichier = Paths.get(nom+".txt");
-		Charset charset = Charset.forName("US-ASCII");
-		List<List<Rectangle>> video=new ArrayList<List<Rectangle>>();
+	/**
+	 * Fonction qui renvoit une liste de liste de Rectangles à partir d'un fichier.
+	 *
+	 * @param nom
+	 *            : Nom du fichier.
+	 * @return La liste des rectangle de détection.
+	 */
+	public static List<List<Rectangle>> charger(final String nom) {
+		final Path fichier = Paths.get(nom + ".txt");
+		final Charset charset = Charset.forName("US-ASCII");
+		final List<List<Rectangle>> video = new ArrayList<>();
 
 		try (BufferedReader reader = Files.newBufferedReader(fichier, charset)) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				//System.out.println(line);
-				List<Rectangle> frame=new ArrayList<Rectangle>();
-				String[] parts=line.split(" ");
-				for(int i=0;i<(parts.length)-3;i=i+4) {
-					int x=Integer.parseInt(parts[i]);
-					int y=Integer.parseInt(parts[i+1]);
-					int w=Integer.parseInt(parts[i+2]);
-					int h=Integer.parseInt(parts[i+3]);
-					Rectangle r=new Rectangle(x,y,w,h);
+				final List<Rectangle> frame = new ArrayList<>();
+				final String[] parts = line.split(" ");
+				for (int i = 0; i < ((parts.length) - 3); i = i + 4) {
+					final int x = Integer.parseInt(parts[i]);
+					final int y = Integer.parseInt(parts[i + 1]);
+					final int w = Integer.parseInt(parts[i + 2]);
+					final int h = Integer.parseInt(parts[i + 3]);
+					final Rectangle r = new Rectangle(x, y, w, h);
 					frame.add(r);
 				}
 				video.add(frame);
 			}
-		} catch (IOException ioe) {
+		} catch (final IOException ioe) {
 		}
 		return video;
-		
-		
+
 	}
 }

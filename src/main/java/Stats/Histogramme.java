@@ -13,18 +13,28 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.DatasetUtilities;
 
+/**
+ *
+ * Histogramme.
+ *
+ */
 public class Histogramme {
 	Panel p = new Panel();
 
-	// Constructeur
-	public Histogramme(final String title, Panel panel, double[][] data) {
-		// On a besoin d'un Dataset (les stats...) + de créer un objet Chart
+	/**
+	 * Constructeur de l'histogramme.
+	 *
+	 * @param title
+	 *            : Nom de l'histogramme.
+	 * @param panel
+	 *            : Conteneur de l'histogramme.
+	 * @param data
+	 *            : Informations de l'histogramme.
+	 */
+	public Histogramme(final String title, final Panel panel, final double[][] data) {
 		final JFreeChart chart = this.createChart(this.createDataset(data), title);
-
-		// Ajout du Chart à un Panel
 		final ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setBounds(0, 0, panel.getWidth(), panel.getHeight());
-
 		this.p.setBackground(new Color(13, 31, 45));
 		this.p.setLayout(null);
 		this.p.add(chartPanel);
@@ -32,14 +42,16 @@ public class Histogramme {
 		panel.add(this.p);
 	}
 
-	// Création du Dataset (un tableau de valeurs au pif) et on le retourne
-	private CategoryDataset createDataset(double[][] data) {
-		return DatasetUtilities.createCategoryDataset("", "", data);
-	}
-
-	// Création de l'histogramme (qui prendra en valeur le Dataset créé
-	// précédemment)
-	private JFreeChart createChart(final CategoryDataset dataset, String title) {
+	/**
+	 * Création de l'histogramme et remplissage de ce dernier.
+	 *
+	 * @param dataset
+	 *            : Le DataSet à représenter.
+	 * @param title
+	 *            : Le titre du graphique.
+	 * @return Le graphique.
+	 */
+	private JFreeChart createChart(final CategoryDataset dataset, final String title) {
 
 		final JFreeChart chart = ChartFactory.createBarChart(title, // Titre
 				"Frame", // Titre axe des abscisses
@@ -48,23 +60,23 @@ public class Histogramme {
 				PlotOrientation.VERTICAL, // Orientation des barres
 				false, // Inclusion de légendes
 				true, false);
-
-		// PARTIE OPTIONNELLE POUR PIMP MY CHART
-
-		// Couleur du fond
 		chart.setBackgroundPaint(Color.lightGray);
-
-		// Localisation des axes
 		final CategoryPlot plot = chart.getCategoryPlot();
 		plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-
-		// change the auto tick unit selection to integer units only...
-		// J'ai pas tout capté j'ai trouvé la doc de cette partie sur internet donc je
-		// l'ai laissée comme je l'ai trouvée
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setRange(0.0, 10.0);
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
 		return chart;
+	}
+
+	/**
+	 * Création des données au format JFreeChart.
+	 *
+	 * @param data
+	 *            : Les valeurs en type numérique.
+	 * @return Le DataSet compréhensible par la bibliothéque.
+	 */
+	private CategoryDataset createDataset(final double[][] data) {
+		return DatasetUtilities.createCategoryDataset("", "", data);
 	}
 }

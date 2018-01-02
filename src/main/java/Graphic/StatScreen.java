@@ -27,65 +27,42 @@ import org.opencv.core.Rect;
 
 import Stats.Histogramme;
 
+/**
+ *
+ * Ecran de statistique.
+ *
+ */
 public class StatScreen {
 
 	private JFrame frame;
+	private Label frameLabel = new Label("");
+	private Panel panel = new Panel();
 	private boolean goToMenu;
 	private boolean goToVideo;
-	Label frameLabel = new Label("");
-	Panel panel = new Panel();
+	private boolean global = true;
+	private boolean local = false;
 	private int currentFrame;
 	private int size;
+	private int selectedRect = 1;
+	private int frameLow = 0;
+	private int frameUp = Integer.MAX_VALUE;
 	private List<Integer> NbPerFrame = new ArrayList<>();
-	double[][] data = new double[1][this.NbPerFrame.size()];
 	private List<Rect> rects = new ArrayList<>();
 	private List<List<Rectangle>> rectPeople = new ArrayList<>();
-	boolean global = true;
-	boolean local = false;
-	int selectedRect = 1;
-	int frameLow = 0;
-	int frameUp = Integer.MAX_VALUE;
+	private double[][] data = new double[1][this.NbPerFrame.size()];
 
 	/**
-	 * Launch the application.
-	 */
-
-	public void setVisible(boolean bool) {
-		this.frame.setVisible(bool);
-	}
-
-	/**
-	 * Create the application.
+	 * Constructeur de l'écran de statistique.
 	 */
 	public StatScreen() {
 		this.initialize();
 	}
 
-	public void setFrameSize(Dimension dim) {
-		this.frame.setSize(dim.width, dim.height);
-	}
-
-	public Dimension getFrameSize() {
-		return this.frame.getSize();
-	}
-
-	public int getX() {
-		return this.frame.getX();
-	}
-
-	public int getY() {
-		return this.frame.getY();
-	}
-
-	public void setLocation(int x, int y) {
-		this.frame.setLocation(x, y);
-	}
-
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre
 	 */
 	private void initialize() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
 		this.frame.setResizable(true);
@@ -126,7 +103,7 @@ public class StatScreen {
 		final Button nextButton = new Button("Local");
 		nextButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				if (StatScreen.this.rects.size() > 0) {
 					StatScreen.this.local = true;
 					StatScreen.this.global = false;
@@ -140,7 +117,7 @@ public class StatScreen {
 		final Button previousButton = new Button("Global");
 		previousButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				StatScreen.this.global = true;
 				StatScreen.this.local = false;
 				StatScreen.this.refresh();
@@ -152,23 +129,16 @@ public class StatScreen {
 		final Button playButton = new Button("TO DO");
 		playButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 			}
 		});
 		playButton.setBounds(404, 522, 79, 24);
 		this.frame.getContentPane().add(playButton);
 
-		final Label rectLabel = new Label("Rectangle n° : ");
-		rectLabel.setForeground(Color.WHITE);
-		rectLabel.setFont(null);
-		rectLabel.setAlignment(Label.RIGHT);
-		rectLabel.setBounds(540, 555, 102, 24);
-		this.frame.getContentPane().add(rectLabel);
-
 		final TextField rectTextField = new TextField();
 		rectTextField.addTextListener(new TextListener() {
 			@Override
-			public void textValueChanged(TextEvent arg0) {
+			public void textValueChanged(final TextEvent arg0) {
 				if (rectTextField.getText().matches("^[0-9]+$") && (Integer.parseInt(rectTextField.getText()) > 0)
 						&& (Integer.parseInt(rectTextField.getText()) < (StatScreen.this.rects.size() + 1))) {
 					StatScreen.this.selectedRect = Integer.parseInt(rectTextField.getText());
@@ -176,6 +146,13 @@ public class StatScreen {
 				}
 			}
 		});
+
+		final Label rectLabel = new Label("Rectangle n° : ");
+		rectLabel.setForeground(Color.WHITE);
+		rectLabel.setFont(null);
+		rectLabel.setAlignment(Label.RIGHT);
+		rectLabel.setBounds(540, 555, 102, 24);
+		this.frame.getContentPane().add(rectLabel);
 		rectTextField.setBounds(641, 555, 24, 24);
 		this.frame.getContentPane().add(rectTextField);
 
@@ -189,7 +166,7 @@ public class StatScreen {
 		final TextField frameLowTextField = new TextField();
 		frameLowTextField.addTextListener(new TextListener() {
 			@Override
-			public void textValueChanged(TextEvent arg0) {
+			public void textValueChanged(final TextEvent arg0) {
 				if (frameLowTextField.getText().matches("^[0-9]+$")
 						&& (Integer.parseInt(frameLowTextField.getText()) > 0)
 						&& (Integer.parseInt(frameLowTextField.getText()) <= (StatScreen.this.frameUp))) {
@@ -211,7 +188,7 @@ public class StatScreen {
 		final TextField frameUpTextField = new TextField();
 		frameUpTextField.addTextListener(new TextListener() {
 			@Override
-			public void textValueChanged(TextEvent arg0) {
+			public void textValueChanged(final TextEvent arg0) {
 				if (frameUpTextField.getText().matches("^[0-9]+$")
 						&& (Integer.parseInt(frameUpTextField.getText()) >= StatScreen.this.frameLow)
 						&& (Integer.parseInt(frameUpTextField.getText()) < (StatScreen.this.size))) {
@@ -225,23 +202,23 @@ public class StatScreen {
 
 		menuLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(final MouseEvent arg0) {
 				StatScreen.this.setGoToMenu(true);
 			}
 		});
 
 		videoLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(final MouseEvent arg0) {
 				StatScreen.this.setGoToVideo(true);
 			}
 		});
 
 		this.frame.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent arg0) {
-				float xlen = (float) StatScreen.this.frame.getWidth() / 930;
-				float ylen = (float) StatScreen.this.frame.getHeight() / 624;
+			public void componentResized(final ComponentEvent arg0) {
+				final float xlen = (float) StatScreen.this.frame.getWidth() / 930;
+				final float ylen = (float) StatScreen.this.frame.getHeight() / 624;
 				StatScreen.this.frameLabel.setBounds((int) (358 * xlen), (int) (555 * ylen), (int) (176 * xlen),
 						(int) (24 * ylen));
 				StatScreen.this.panel.setBounds((int) (50 * xlen), (int) (37 * ylen), (int) (824 * xlen),
@@ -264,27 +241,57 @@ public class StatScreen {
 		});
 	}
 
-	public double[][] getData() {
-		return this.data;
+	// Getters
+
+	public boolean isGoToMenu() {
+		return this.goToMenu;
 	}
 
-	public void setData(double[][] data) {
+	public boolean isGoToVideo() {
+		return this.goToVideo;
+	}
+
+	public void setCurrentFrame(final int currentFrame) {
+		this.currentFrame = currentFrame;
+	}
+
+	public void setData(final double[][] data) {
 		this.data = data;
 	}
 
-	public void setNbPerFrameIntoData(int Ilow, int Iup) {
-		int range = Iup - Ilow;
-		double[][] data = new double[1][range];
+	public void setFrameSize(final Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public void setGoToMenu(final boolean goToMenu) {
+		this.goToMenu = goToMenu;
+	}
+
+	public void setGoToVideo(final boolean goToVideo) {
+		this.goToVideo = goToVideo;
+	}
+
+	public void setLocation(final int x, final int y) {
+		this.frame.setLocation(x, y);
+	}
+
+	public void setNbPerFrame(final List<Integer> nbPerFrame) {
+		this.NbPerFrame = nbPerFrame;
+	}
+
+	public void setNbPerFrameIntoData(final int Ilow, final int Iup) {
+		final int range = Iup - Ilow;
+		final double[][] data = new double[1][range];
 		for (int i = 0; i < range; i++) {
 			data[0][i] = this.NbPerFrame.get(Ilow + i);
 		}
 		this.setData(data);
 	}
 
-	public void setNbPerRectIntoData(int rectIndice, int Ilow, int Iup) {
+	public void setNbPerRectIntoData(int rectIndice, final int Ilow, final int Iup) {
 		rectIndice -= 1;
-		int range = Iup - Ilow;
-		double[][] data = new double[1][range];
+		final int range = Iup - Ilow;
+		final double[][] data = new double[1][range];
 		for (int i = 0; i < range; i++) {
 			for (int j = 0; j < this.NbPerFrame.get(Ilow + i); j++) {
 				if ((this.rects.size() > 0) && (this.rectPeople.get(Ilow + i).size() > 0)
@@ -296,9 +303,26 @@ public class StatScreen {
 		this.setData(data);
 	}
 
-	public Point center(Rectangle rectangle) {
-		return new Point(rectangle.getCenterX(), rectangle.getCenterY());
+	public void setRectPeoplePerFrame(final List<List<Rectangle>> rectPeoplePerFrame) {
+		this.rectPeople = rectPeoplePerFrame;
 	}
+
+	public void setRectPerFrame(final List<Rect> rectPerFrame) {
+		this.rects = rectPerFrame;
+	}
+
+	public void setSize(final int size) {
+		if (this.frameUp > size) {
+			this.frameUp = size;
+		}
+		this.size = size;
+	}
+
+	public void setVisible(final boolean bool) {
+		this.frame.setVisible(bool);
+	}
+
+	// Méthodes
 
 	public void refresh() {
 		this.frameLabel.setText("Frame : " + this.currentFrame + "/" + (this.size - 1));
@@ -312,44 +336,7 @@ public class StatScreen {
 		}
 	}
 
-	public boolean isGoToMenu() {
-		return this.goToMenu;
+	public Point center(final Rectangle rectangle) {
+		return new Point(rectangle.getCenterX(), rectangle.getCenterY());
 	}
-
-	public void setGoToMenu(boolean goToMenu) {
-		this.goToMenu = goToMenu;
-	}
-
-	public boolean isGoToVideo() {
-		return this.goToVideo;
-	}
-
-	public void setGoToVideo(boolean goToVideo) {
-		this.goToVideo = goToVideo;
-	}
-
-	public void setCurrentFrame(int currentFrame) {
-		this.currentFrame = currentFrame;
-	}
-
-	public void setSize(int size) {
-		if (this.frameUp > size) {
-			this.frameUp = size;
-		}
-		this.size = size;
-	}
-
-	public void setNbPerFrame(List<Integer> nbPerFrame) {
-		this.NbPerFrame = nbPerFrame;
-	}
-
-	public void setRectPerFrame(List<Rect> rectPerFrame) {
-		this.rects = rectPerFrame;
-	}
-
-	public void setRectPeoplePerFrame(List<List<Rectangle>> rectPeoplePerFrame) {
-		this.rectPeople = rectPeoplePerFrame;
-
-	}
-
 }

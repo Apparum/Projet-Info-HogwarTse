@@ -22,60 +22,38 @@ import java.awt.event.TextListener;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileSystemView;
 
-@SuppressWarnings("unused")
+/**
+ *
+ * Ecran de démarrage.
+ *
+ */
 public class StartingScreen {
 
 	private JFrame frame;
 	private String path = new String("No path yet");
-	boolean fileChoosed = false;
+	private boolean fileChoosed = false;
 	private boolean goToVideo;
 	private boolean setupVideoReader = false;
 	private boolean quit = false;
-	private int frameoff = 1;
 	private boolean hogVisibility = true;
+	private boolean hogOrKalman = true;
+	private int frameoff = 1;
 
 	/**
-	 * Launch the application.
-	 */
-
-	public void setVisible(boolean bool) {
-		this.frame.setVisible(bool);
-	}
-
-	/**
-	 * Create the application.
+	 * Constructeur de l'écran de démarrage.
 	 */
 	public StartingScreen() {
 		this.initialize();
 	}
 
-	public void setFrameSize(Dimension dim) {
-		this.frame.setSize(dim.width, dim.height);
-	}
-
-	public Dimension getFrameSize() {
-		return this.frame.getSize();
-	}
-
-	public int getX() {
-		return this.frame.getX();
-	}
-
-	public int getY() {
-		return this.frame.getY();
-	}
-
-	public void setLocation(int x, int y) {
-		this.frame.setLocation(x, y);
-	}
-
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre.
 	 */
 	private void initialize() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
 		this.frame.setResizable(true);
@@ -92,18 +70,18 @@ public class StartingScreen {
 		playButton.setBounds(337, 372, 200, 65);
 		this.frame.getContentPane().add(playButton);
 
-		final Label HOGVisibilityLabel = new Label("Is HOG visible");
+		final Label HOGVisibilityLabel = new Label("Is detection visible");
 		HOGVisibilityLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		HOGVisibilityLabel.setBackground(new Color(98, 104, 104));
 		HOGVisibilityLabel.setAlignment(Label.RIGHT);
-		HOGVisibilityLabel.setBounds(60, 398, 125, 24);
+		HOGVisibilityLabel.setBounds(60, 431, 215, 24);
 		this.frame.getContentPane().add(HOGVisibilityLabel);
 
 		final Checkbox HOGVisibilityCheckbox = new Checkbox("");
 		HOGVisibilityCheckbox.setState(true);
 		HOGVisibilityCheckbox.addItemListener(new ItemListener() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void itemStateChanged(final ItemEvent e) {
 				e.getStateChange();
 				if (e.getStateChange() == 1) {
 					StartingScreen.this.setHogVisible(true);
@@ -113,13 +91,37 @@ public class StartingScreen {
 			}
 		});
 		HOGVisibilityCheckbox.setBackground(new Color(98, 104, 104));
-		HOGVisibilityCheckbox.setBounds(191, 398, 24, 24);
+		HOGVisibilityCheckbox.setBounds(281, 431, 24, 24);
 		this.frame.getContentPane().add(HOGVisibilityCheckbox);
+
+		final Label methodLabel = new Label("HOG (check) Kalman (uncheck)");
+		methodLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		methodLabel.setBackground(new Color(98, 104, 104));
+		methodLabel.setAlignment(Label.RIGHT);
+		methodLabel.setBounds(60, 399, 216, 24);
+		this.frame.getContentPane().add(methodLabel);
+
+		final Checkbox methodCheckbox = new Checkbox("");
+		methodCheckbox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				e.getStateChange();
+				if (e.getStateChange() == 1) {
+					StartingScreen.this.setHogOrKalman(true);
+				} else {
+					StartingScreen.this.setHogOrKalman(false);
+				}
+			}
+		});
+		methodCheckbox.setState(true);
+		methodCheckbox.setBackground(new Color(98, 104, 104));
+		methodCheckbox.setBounds(281, 399, 24, 24);
+		this.frame.getContentPane().add(methodCheckbox);
 
 		final TextField indiceTextField = new TextField();
 		indiceTextField.addTextListener(new TextListener() {
 			@Override
-			public void textValueChanged(TextEvent e) {
+			public void textValueChanged(final TextEvent e) {
 				if (indiceTextField.getText().matches("^[0-9]+$")) {
 					StartingScreen.this.setFrameoff(Integer.parseInt(indiceTextField.getText()));
 				}
@@ -127,17 +129,26 @@ public class StartingScreen {
 		});
 		indiceTextField.setBackground(new Color(98, 104, 104));
 		indiceTextField.setText("1");
-		indiceTextField.setBounds(191, 372, 24, 24);
+		indiceTextField.setBounds(281, 372, 24, 24);
 		this.frame.getContentPane().add(indiceTextField);
 
 		final Label indiceLabel = new Label("Take 1 frame out of");
 		indiceLabel.setBackground(new Color(98, 104, 104));
 		indiceLabel.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		indiceLabel.setAlignment(Label.RIGHT);
-		indiceLabel.setBounds(60, 369, 125, 24);
+		indiceLabel.setBounds(60, 369, 215, 24);
 		this.frame.getContentPane().add(indiceLabel);
 
-		final Label contentLabel = new Label("Welcome on the Hogwar\'Tse software for human detection");
+		final JTextArea contentTextArea = new JTextArea();
+		contentTextArea.setEditable(false);
+		contentTextArea.setForeground(Color.WHITE);
+		contentTextArea.setBackground(new Color(98, 104, 104));
+		contentTextArea.setText(
+				"From this menu, you can select the video you want to analyse from the \"browse file\" button on the right bottom corner.\r\nAlso if you want to slow the ips rate, change the factor in the box.\r\nFinally you can choose whether you want to use HOG or Kalman, and if you want to see the detection on the screen.");
+		contentTextArea.setBounds(93, 250, 723, 119);
+		this.frame.getContentPane().add(contentTextArea);
+
+		final Label contentLabel = new Label("Welcome on the Hogwar'Tse software for human detection");
 		contentLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
 		contentLabel.setBackground(new Color(98, 104, 104));
 		contentLabel.setForeground(Color.WHITE);
@@ -194,7 +205,7 @@ public class StartingScreen {
 
 		browserButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				final JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				final int returnValue = jfc.showOpenDialog(null);
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -209,7 +220,7 @@ public class StartingScreen {
 
 		playButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (StartingScreen.this.fileChoosed == false) {
 					browserLabel.setBackground(Color.RED);
 				} else {
@@ -220,7 +231,7 @@ public class StartingScreen {
 
 		quitLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(final MouseEvent arg0) {
 				StartingScreen.this.setQuit(true);
 				StartingScreen.this.frame.dispose();
 			}
@@ -228,12 +239,12 @@ public class StartingScreen {
 
 		this.frame.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent arg0) {
-				float xlen = (float) StartingScreen.this.frame.getWidth() / 930;
-				float ylen = (float) StartingScreen.this.frame.getHeight() / 624;
+			public void componentResized(final ComponentEvent arg0) {
+				final float xlen = (float) StartingScreen.this.frame.getWidth() / 930;
+				final float ylen = (float) StartingScreen.this.frame.getHeight() / 624;
 				playButton.setBounds((int) (337 * xlen), (int) (372 * ylen), (int) (200 * xlen), (int) (65 * ylen));
-				indiceTextField.setBounds((int) (191 * xlen), (int) (372 * ylen), (int) (24 * xlen), (int) (24 * ylen));
-				indiceLabel.setBounds((int) (60 * xlen), (int) (369 * ylen), (int) (125 * xlen), (int) (24 * ylen));
+				indiceTextField.setBounds((int) (281 * xlen), (int) (372 * ylen), (int) (24 * xlen), (int) (24 * ylen));
+				indiceLabel.setBounds((int) (60 * xlen), (int) (369 * ylen), (int) (215 * xlen), (int) (24 * ylen));
 				contentLabel.setBounds((int) (50 * xlen), (int) (95 * ylen), (int) (824 * xlen), (int) (275 * ylen));
 				contentRect.setBounds((int) (50 * xlen), (int) (95 * ylen), (int) (824 * xlen), (int) (401 * ylen));
 				titleLabel.setBounds((int) (52 * xlen), (int) (29 * ylen), (int) (204 * xlen), (int) (40 * ylen));
@@ -244,59 +255,91 @@ public class StartingScreen {
 				browserLabel.setBounds((int) (53 * xlen), (int) (529 * ylen), (int) (683 * xlen), (int) (32 * ylen));
 				browserRectBorder.setBounds((int) (50 * xlen), (int) (526 * ylen), (int) (686 * xlen),
 						(int) (38 * ylen));
-				HOGVisibilityLabel.setBounds((int) (60 * xlen), (int) (398 * ylen), (int) (125 * xlen),
+				HOGVisibilityLabel.setBounds((int) (60 * xlen), (int) (431 * ylen), (int) (215 * xlen),
 						(int) (24 * ylen));
-				HOGVisibilityCheckbox.setBounds((int) (191 * xlen), (int) (398 * ylen), (int) (24 * xlen),
+				HOGVisibilityCheckbox.setBounds((int) (281 * xlen), (int) (431 * ylen), (int) (24 * xlen),
 						(int) (24 * ylen));
+				methodLabel.setBounds((int) (60 * xlen), (int) (399 * ylen), (int) (216 * xlen), (int) (24 * ylen));
+				methodCheckbox.setBounds((int) (281 * xlen), (int) (399 * ylen), (int) (24 * xlen), (int) (24 * ylen));
+				contentTextArea.setBounds((int) (93 * xlen), (int) (250 * ylen), (int) (723 * xlen),
+						(int) (119 * ylen));
 			}
 		});
 	}
 
-	public void setHogVisible(boolean b) {
-		this.hogVisibility = b;
+	// Getters
+
+	public int getFrameoff() {
+		return this.frameoff;
 	}
 
-	public boolean isHogVisible() {
-		return this.hogVisibility;
-	}
-
-	public boolean isGoToVideo() {
-		return this.goToVideo;
-	}
-
-	public void setGoToVideo(boolean goToVideo) {
-		this.goToVideo = goToVideo;
+	public Dimension getFrameSize() {
+		return this.frame.getSize();
 	}
 
 	public String getPath() {
 		return this.path;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public int getX() {
+		return this.frame.getX();
 	}
 
-	public boolean isSetupVideoReader() {
-		return this.setupVideoReader;
+	public int getY() {
+		return this.frame.getY();
 	}
 
-	public void setSetupVideoReader(boolean setupVideoReader) {
-		this.setupVideoReader = setupVideoReader;
+	public boolean isGoToVideo() {
+		return this.goToVideo;
+	}
+
+	public boolean isHogVisible() {
+		return this.hogVisibility;
+	}
+
+	public boolean isHogOrKalman() {
+		return this.hogOrKalman;
 	}
 
 	public boolean isQuit() {
 		return this.quit;
 	}
 
-	public void setQuit(boolean quit) {
+	public boolean isSetupVideoReader() {
+		return this.setupVideoReader;
+	}
+
+	// Setters
+
+	public void setFrameoff(final int frameoff) {
+		this.frameoff = frameoff;
+	}
+
+	public void setFrameSize(final Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public void setGoToVideo(final boolean goToVideo) {
+		this.goToVideo = goToVideo;
+	}
+
+	public void setHogVisible(final boolean b) {
+		this.hogVisibility = b;
+	}
+
+	public void setHogOrKalman(final boolean b) {
+		this.hogOrKalman = b;
+	}
+
+	public void setQuit(final boolean quit) {
 		this.quit = quit;
 	}
 
-	public int getFrameoff() {
-		return this.frameoff;
+	public void setSetupVideoReader(final boolean setupVideoReader) {
+		this.setupVideoReader = setupVideoReader;
 	}
 
-	public void setFrameoff(int frameoff) {
-		this.frameoff = frameoff;
+	public void setVisible(final boolean bool) {
+		this.frame.setVisible(bool);
 	}
 }

@@ -2,7 +2,18 @@ import Graphic.StartingScreen;
 import Graphic.StatScreen;
 import Graphic.VideoScreen;
 
+/**
+ *
+ * La classe Main sert à cadencer l'intégralité du programme. C'est elle qui
+ * contient tous les autres objets du programme et décide comment ceux-ci
+ * doivent intéragir.
+ *
+ */
 public class Main {
+	/*
+	 * Les ecrans sont générés ici ainsi que des variables pour naviguer entre ces
+	 * derniers.
+	 */
 	StartingScreen startingScreen = new StartingScreen();
 	VideoScreen videoScreen = new VideoScreen();
 	StatScreen statScreen = new StatScreen();
@@ -10,12 +21,28 @@ public class Main {
 	private boolean goToVideoScreen = false;
 	private boolean goToStatScreen = false;
 
-	public static void main(String[] args) throws InterruptedException {
-		Main instance = new Main();
-		instance.init();
+	/**
+	 *
+	 * Le main vient créer une instance pour la session à venir.
+	 *
+	 * @param args
+	 * @throws InterruptedException
+	 */
+	public static void main(final String[] args) throws InterruptedException {
+		final Main instance = new Main();
+		instance.start();
 	}
 
-	public void init() throws InterruptedException {
+	/**
+	 *
+	 * Cette fonction est le cadenceur de tout le programme. Elle va récupérer en
+	 * permanence les informations de déplacements de fenêtre et s'occuper de faire
+	 * passer les informations entre celles-ci. Elle s'occupe également d'adapter
+	 * l'affichage et de gérer la fréquence d'affichage.
+	 *
+	 * @throws InterruptedException
+	 */
+	public void start() throws InterruptedException {
 		while (true) {
 			if (this.goToStartingScreen == true) {
 				this.startingScreen.setFrameSize(this.videoScreen.getFrameSize());
@@ -28,6 +55,7 @@ public class Main {
 			}
 			if (this.startingScreen.isSetupVideoReader()) {
 				this.videoScreen.setPath(this.startingScreen.getPath());
+				this.videoScreen.setHogOrKalman(this.startingScreen.isHogOrKalman());
 				this.videoScreen.setHogVisible(this.startingScreen.isHogVisible());
 				this.videoScreen.setFrameoff(this.startingScreen.getFrameoff());
 				this.videoScreen.setup();

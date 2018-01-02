@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,31 +23,37 @@ import Detection.MainKalman;
 import Save.Loading;
 import Save.Saving;
 
-@SuppressWarnings("unused")
+/**
+ *
+ * Lecteur de vidéo.
+ *
+ */
 public class VideoReader {
 
-	private List<List<Integer>> listLabel = new ArrayList<>();
 	private VideoCapture video;
-	private List<Mat> frames = new ArrayList<>();
-	private List<Mat> framesClone = new ArrayList<>();
-	private String path;
-	private HOGDetection hog = new HOGDetection();
-	private MainKalman kalman = new MainKalman();
-	final Scalar rectColor = new Scalar(0, 255, 0);
-	private List<List<Rectangle>> rects = new ArrayList<>();
 	private String nomVideo;
-
+	private final String path;
+	private final HOGDetection hog = new HOGDetection();
+	private final MainKalman kalman = new MainKalman();
+	private final Scalar rectColor = new Scalar(0, 255, 0);
 	private int frameoff = 1;
 	private boolean hogVisibility = true;
-	private List<Integer> nbPerFrame = new ArrayList<>();
+	private boolean hogOrKalman = true; // 1 = hog, 0 = kalman
+	private final List<Mat> frames = new ArrayList<>();
+	private final List<Mat> framesClone = new ArrayList<>();
+	private List<List<Rectangle>> rects = new ArrayList<>();
+	private final List<Integer> nbPerFrame = new ArrayList<>();
+	private final List<List<Integer>> listLabel = new ArrayList<>();
 
-	public List<Integer> getNbPerFrame() {
-		return this.nbPerFrame;
-	}
-
-	public VideoReader(String path) {
+	/**
+	 * Constructeur du lecture de la vidéo.
+	 *
+	 * @param path
+	 *            : Chemin menant à la vidéo considérée.
+	 */
+	public VideoReader(final String path) {
 		this.path = path;
-		String[] pathSplit = path.split("\\\\");
+		final String[] pathSplit = path.split("\\\\");
 		this.nomVideo = pathSplit[pathSplit.length - 1];
 		this.nomVideo = this.nomVideo.substring(0, this.nomVideo.lastIndexOf("."));
 	}
@@ -57,26 +62,19 @@ public class VideoReader {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		final Mat frame = new Mat();
 		this.video = new VideoCapture(this.path);
-		// this.video.read(frame);
-		double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
+		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		System.out.println("There are " + size + " frames");
-
-		/*
-		 * Path fichier = Paths.get(this.nomVideo + ".txt"); Charset charset =
-		 * Charset.forName("US-ASCII"); boolean dejaVu = Files.exists(fichier);
-		 */
-		boolean dejaVu = false;
-		boolean hog = false;
+		Path fichier = Paths.get(this.nomVideo + ".txt");
+		boolean dejaVu = Files.exists(fichier);
 		///////////// HOG////////////////
-
-		if (hog) {
+		if (this.hogOrKalman) {
 			while (this.video.read(frame)) {
 				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 				// On ne fait la détection que si on n'a pas le fichier correspondant.
 				if (!dejaVu) {
 					if ((currentFrame % this.frameoff) == 0) {
-						List<Rectangle> detected = this.hog.detect(frame);
+						final List<Rectangle> detected = this.hog.detect(frame);
 						this.rects.add(detected);
 						this.nbPerFrame.add(detected.size());
 					} else {
@@ -90,7 +88,7 @@ public class VideoReader {
 			if (dejaVu) {
 				System.out.println("The video was already in memory");
 				this.rects = Loading.charger(this.nomVideo);
-				for (List<Rectangle> image : this.rects) {
+				for (final List<Rectangle> image : this.rects) {
 					this.nbPerFrame.add(image.size());
 				}
 			}
@@ -107,33 +105,33 @@ public class VideoReader {
 		else {
 
 			try {
-				rects = MainKalman.process(video);
-				System.out.println("Ca marche !");
-			} catch (InterruptedException e) {
+				this.rects = MainKalman.process(this.video);
+				System.out.println("Fin du chargement de Kalman !");
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
-				System.out.println("On est dans la merde !!!");
+				System.out.println("Erreur dans Kalman");
 			}
 			this.video = new VideoCapture(this.path);
 			while (this.video.read(frame)) {
 				this.framesClone.add(frame.clone());
 			}
 
-			for (int k = 0; k < rects.size(); k++) {
-				this.nbPerFrame.add(rects.get(k).size());
+			for (int k = 0; k < this.rects.size(); k++) {
+				this.nbPerFrame.add(this.rects.get(k).size());
 			}
 		}
 		///////////////////////
 		this.labellisation();
 		int nbFrame = 0, compteurRect = 0;
-		for (Mat matFrame : this.framesClone) {
+		for (final Mat matFrame : this.framesClone) {
 			if (this.hogVisibility) {
 				for (final Rectangle rectangle : this.rects.get(nbFrame)) {
 					Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
 							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor,
 							1);
-					Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
-							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
-							Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
+					// Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
+					// new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
+					// Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
 					compteurRect++;
 				}
 			}
@@ -144,27 +142,85 @@ public class VideoReader {
 		System.out.println("Loading completed !");
 	}
 
-	private int intersectionArea(Rectangle rect1, Rectangle rect2) {
-		Rectangle rect3 = rect1.intersection(rect2);
-		if (rect3.isEmpty()) {
-			return -1;
-		} else {
-			return rect3.width * rect3.height;
-		}
+	// Getters
+
+	private double getArea(final Rectangle rect) {
+		return rect.getWidth() * rect.getHeight();
 	}
 
-	private List<List<Rectangle>> interpolation(List<List<Rectangle>> listImg) {
+	public Mat getMat(final int frame) {
+		return this.frames.get(frame);
+	}
+
+	public List<Integer> getNbPerFrame() {
+		return this.nbPerFrame;
+	}
+
+	public List<List<Rectangle>> getRectPeoplePerFrame() {
+		return this.rects;
+	}
+
+	public VideoCapture getVideo() {
+		return this.video;
+	}
+
+	public int size() {
+		return this.frames.size();
+	}
+
+	// Setters
+
+	public void setFrameoff(final int frameoff) {
+		this.frameoff = frameoff;
+
+	}
+
+	public void setHogVisible(final boolean hogVisible) {
+		this.hogVisibility = hogVisible;
+	}
+
+	public void setHogOrKalman(boolean hogOrKalman) {
+		this.hogOrKalman = hogOrKalman;
+	}
+
+	public void setVideo(final VideoCapture video) {
+		this.video = video;
+	}
+
+	// Méthodes
+
+	/**
+	 * Calcule une moyenne entre deux nombres entiers.
+	 *
+	 * @param a
+	 *            : 1er nombre.
+	 * @param b
+	 *            : 2eme nombre.
+	 * @return La moyenne.
+	 */
+	private int avg(final int a, final int b) {
+		return (a + b) / 2;
+	}
+
+	/**
+	 * Calcule les rectangles interpolés entre des images successives.
+	 *
+	 * @param listImg
+	 *            : La liste des rectangles de chaque frame.
+	 * @return La liste des rectangles de chaque frame après interpolation.
+	 */
+	private List<List<Rectangle>> interpolation(final List<List<Rectangle>> listImg) {
 		int compteur = 0;
 		int maxArea;
 		boolean condition;
-		for (List<Rectangle> listRect : listImg) {
+		for (final List<Rectangle> listRect : listImg) {
 			if ((compteur > 0) && (compteur < (listImg.size() - 1))) {
-				for (Rectangle rectPrevious : listImg.get(compteur - 1)) {
+				for (final Rectangle rectPrevious : listImg.get(compteur - 1)) {
 					maxArea = 0;
 					Rectangle rectNextIntersect = new Rectangle();
-					for (Rectangle rectNext : listImg.get(compteur + 1)) {
+					for (final Rectangle rectNext : listImg.get(compteur + 1)) {
 						condition = true;
-						for (Rectangle actualRect : listImg.get(compteur)) {
+						for (final Rectangle actualRect : listImg.get(compteur)) {
 							if (actualRect.intersects(rectNext.intersection(rectPrevious))) {
 								condition = false;
 							}
@@ -184,22 +240,43 @@ public class VideoReader {
 		return listImg;
 	}
 
+	/**
+	 * Détermine la surface d'intersectionde deux rectangles.
+	 *
+	 * @param rect1
+	 *            : 1er rectangle.
+	 * @param rect2
+	 *            : 2eme rectangle.
+	 * @return L'aire de l'intersection.
+	 */
+	private int intersectionArea(final Rectangle rect1, final Rectangle rect2) {
+		final Rectangle rect3 = rect1.intersection(rect2);
+		if (rect3.isEmpty()) {
+			return -1;
+		} else {
+			return rect3.width * rect3.height;
+		}
+	}
+
+	/**
+	 * Inscrit dans listLabel les labels des personnes présentes dans l'image.
+	 */
 	private void labellisation() {
 		int maxLabel = 0, indiceMax = 0, compteur = 0;
 		double maxArea = 0;
-		List<Integer> listInter = new ArrayList<>();
+		final List<Integer> listInter = new ArrayList<>();
 		for (int j = 0; j < this.rects.get(0).size(); j++) {
 			listInter.add(maxLabel);
 			maxLabel++;
 		}
-		listLabel.add(listInter);
+		this.listLabel.add(listInter);
 		listInter.clear();
-		for (int k = 1; k < rects.size(); k++) {
-			List<Integer> listInter1 = new ArrayList<>();
-			for (Rectangle actualRect : this.rects.get(k)) {
+		for (int k = 1; k < this.rects.size(); k++) {
+			final List<Integer> listInter1 = new ArrayList<>();
+			for (final Rectangle actualRect : this.rects.get(k)) {
 				System.out.println(this.listLabel);
 				System.out.println(listInter1);
-				for (Rectangle nextRect : this.rects.get(k - 1)) {
+				for (final Rectangle nextRect : this.rects.get(k - 1)) {
 					if (this.getArea(actualRect.intersection(nextRect)) > maxArea) {
 						maxArea = this.getArea(actualRect.intersection(nextRect));
 						indiceMax = compteur;
@@ -216,31 +293,31 @@ public class VideoReader {
 			}
 			indiceMax = 0;
 			maxArea = 0;
-			listLabel.add(listInter1);
+			this.listLabel.add(listInter1);
 		}
 	}
 
-	private double getArea(Rectangle rect) {
-		return rect.getWidth() * rect.getHeight();
-	}
-
-	private Rectangle rectangleAvg(Rectangle rect1, Rectangle rect2) {
+	/**
+	 * Crée un rectangle moyen, issu de deux rectangle.
+	 *
+	 * @param rect1
+	 *            : 1er rectangle.
+	 * @param rect2
+	 *            : 2eme rectangle.
+	 * @return Un rectangle moyen.
+	 */
+	private Rectangle rectangleAvg(final Rectangle rect1, final Rectangle rect2) {
 		return new Rectangle(this.avg(rect1.x, rect2.x), this.avg(rect1.y, rect2.y), this.avg(rect1.width, rect2.width),
 				this.avg(rect1.height, rect2.height));
 	}
 
-	private int avg(int a, int b) {
-		return (a + b) / 2;
-	}
-
-	public int size() {
-		return this.frames.size();
-	}
-
-	public Mat getMat(int frame) {
-		return this.frames.get(frame);
-	}
-
+	/**
+	 * Convertit une Mat(rice) en BufferedImage.
+	 *
+	 * @param frame
+	 *            : La matrice à convertir.
+	 * @return image : La BufferedImage associée.
+	 */
 	public static BufferedImage MatToBufferedImage(final Mat frame) {
 		int type = 0;
 		if (frame.channels() == 1) {
@@ -253,29 +330,6 @@ public class VideoReader {
 		final DataBufferByte dataBuffer = (DataBufferByte) raster.getDataBuffer();
 		final byte[] data = dataBuffer.getData();
 		frame.get(0, 0, data);
-
 		return image;
 	}
-
-	public VideoCapture getVideo() {
-		return this.video;
-	}
-
-	public void setVideo(VideoCapture video) {
-		this.video = video;
-	}
-
-	public void setFrameoff(int frameoff) {
-		this.frameoff = frameoff;
-
-	}
-
-	public void setHogVisible(boolean hogVisible) {
-		this.hogVisibility = hogVisible;
-	}
-
-	public List<List<Rectangle>> getRectPeoplePerFrame() {
-		return this.rects;
-	}
-
 }
