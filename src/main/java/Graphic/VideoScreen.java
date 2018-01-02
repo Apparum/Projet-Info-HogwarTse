@@ -107,8 +107,8 @@ public class VideoScreen {
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
-				if ((VideoScreen.this.currentFrame + 5) < VideoScreen.this.video.size()) {
-					VideoScreen.this.moveFrame(5);
+				if ((VideoScreen.this.currentFrame + 1) < VideoScreen.this.video.size()) {
+					VideoScreen.this.moveFrame(1);
 				}
 			}
 		});
@@ -119,8 +119,8 @@ public class VideoScreen {
 		previousButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
-				if ((VideoScreen.this.currentFrame - 5) > 0) {
-					VideoScreen.this.moveFrame(-5);
+				if ((VideoScreen.this.currentFrame - 1) > 0) {
+					VideoScreen.this.moveFrame(-1);
 				}
 			}
 		});

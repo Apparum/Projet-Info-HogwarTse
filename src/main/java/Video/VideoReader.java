@@ -129,11 +129,12 @@ public class VideoReader {
 					Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
 							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor,
 							1);
-					// Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
-					// new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
-					// Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
+					Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
+							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
+							Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
 					compteurRect++;
 				}
+				compteurRect = 0;
 			}
 			this.frames.add(matFrame.clone());
 			nbFrame += 1;
@@ -241,7 +242,7 @@ public class VideoReader {
 	}
 
 	/**
-	 * Détermine la surface d'intersectionde deux rectangles.
+	 * Détermine la surface d'intersection de deux rectangles.
 	 *
 	 * @param rect1
 	 *            : 1er rectangle.
@@ -263,42 +264,46 @@ public class VideoReader {
 	 */
 	private void labellisation() {
 		int maxLabel = 0, indiceMax = 0, compteur = 0;
+		double intersectArea;
 		double maxArea = 0;
-		final List<Integer> listInter = new ArrayList<>();
+		List<Integer> listInter = new ArrayList<>();
 		for (int j = 0; j < this.rects.get(0).size(); j++) {
 			listInter.add(maxLabel);
 			maxLabel++;
 		}
 		this.listLabel.add(listInter);
-		listInter.clear();
 		for (int k = 1; k < this.rects.size(); k++) {
-			final List<Integer> listInter1 = new ArrayList<>();
-			for (final Rectangle actualRect : this.rects.get(k)) {
-				System.out.println(this.listLabel);
-				System.out.println(listInter1);
-				for (final Rectangle nextRect : this.rects.get(k - 1)) {
-					if (this.getArea(actualRect.intersection(nextRect)) > maxArea) {
-						maxArea = this.getArea(actualRect.intersection(nextRect));
+			List<Integer> listInter1 = new ArrayList<>();
+			for (Rectangle actualRect : this.rects.get(k)) {
+				for (Rectangle previousRect : this.rects.get(k - 1)) {
+					if (actualRect.intersects(previousRect)) {
+						intersectArea = this.getArea(actualRect.intersection(previousRect));
+					} else {
+						intersectArea = 0;
+					}
+					// System.out.println(actualRect.intersects(previousRect));
+					if (intersectArea > maxArea) {
+						maxArea = intersectArea;
 						indiceMax = compteur;
 					}
-					compteur++;
+					compteur = compteur + 1;
 				}
 				if (maxArea > this.getArea(actualRect) / 2) {
-					System.out.println();
 					listInter1.add(this.listLabel.get(k - 1).get(indiceMax));
 				} else {
 					listInter1.add(maxLabel);
 					maxLabel++;
 				}
+				compteur = 0;
+				maxArea = 0;
+				indiceMax = 0;
 			}
-			indiceMax = 0;
-			maxArea = 0;
 			this.listLabel.add(listInter1);
 		}
 	}
 
 	/**
-	 * Crée un rectangle moyen, issu de deux rectangle.
+	 * Crée un rectangle résultant de la moyenne des coordonnées de deux rectangles.
 	 *
 	 * @param rect1
 	 *            : 1er rectangle.
