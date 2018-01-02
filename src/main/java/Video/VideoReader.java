@@ -38,6 +38,7 @@ public class VideoReader {
 	private final Scalar rectColor = new Scalar(0, 255, 0);
 	private int frameoff = 1;
 	private boolean hogVisibility = true;
+	private boolean hogOrKalman = true; // 1 = hog, 0 = kalman
 	private final List<Mat> frames = new ArrayList<>();
 	private final List<Mat> framesClone = new ArrayList<>();
 	private List<List<Rectangle>> rects = new ArrayList<>();
@@ -66,9 +67,8 @@ public class VideoReader {
 		System.out.println("There are " + size + " frames");
 		Path fichier = Paths.get(this.nomVideo + ".txt");
 		boolean dejaVu = Files.exists(fichier);
-		final boolean hog = false;
 		///////////// HOG////////////////
-		if (hog) {
+		if (this.hogOrKalman) {
 			while (this.video.read(frame)) {
 				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 				// On ne fait la détection que si on n'a pas le fichier correspondant.
@@ -177,6 +177,10 @@ public class VideoReader {
 
 	public void setHogVisible(final boolean hogVisible) {
 		this.hogVisibility = hogVisible;
+	}
+
+	public void setHogOrKalman(boolean hogOrKalman) {
+		this.hogOrKalman = hogOrKalman;
 	}
 
 	public void setVideo(final VideoCapture video) {
@@ -327,5 +331,4 @@ public class VideoReader {
 		frame.get(0, 0, data);
 		return image;
 	}
-
 }

@@ -52,6 +52,7 @@ public class VideoScreen {
 	private boolean goToMenu;
 	private boolean hogVisibility = true;
 	private boolean play = false;
+	private boolean hogOrKalman = true;
 	private int currentFrame = 0;
 	private int frameoff = 1;
 	private Rect zoneModif = new Rect();
@@ -324,6 +325,10 @@ public class VideoScreen {
 		this.hogVisibility = hogVisible;
 	}
 
+	public void setHogOrKalman(boolean hogOrKalman) {
+		this.hogOrKalman = hogOrKalman;
+	}
+
 	public void setLocation(final int x, final int y) {
 		this.frame.setLocation(x, y);
 	}
@@ -350,6 +355,7 @@ public class VideoScreen {
 		this.video = new VideoReader(this.path);
 		this.video.setHogVisible(this.hogVisibility);
 		this.video.setFrameoff(this.frameoff);
+		this.video.setHogOrKalman(this.hogOrKalman);
 		this.video.init();
 		this.currentFrame = 0;
 		this.refresh();

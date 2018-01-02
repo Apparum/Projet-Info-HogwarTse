@@ -55,6 +55,7 @@ public class Main {
 			}
 			if (this.startingScreen.isSetupVideoReader()) {
 				this.videoScreen.setPath(this.startingScreen.getPath());
+				this.videoScreen.setHogOrKalman(this.startingScreen.isHogOrKalman());
 				this.videoScreen.setHogVisible(this.startingScreen.isHogVisible());
 				this.videoScreen.setFrameoff(this.startingScreen.getFrameoff());
 				this.videoScreen.setup();
