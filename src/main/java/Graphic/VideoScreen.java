@@ -36,113 +36,42 @@ import org.opencv.imgproc.Imgproc;
 
 import Video.VideoReader;
 
+/**
+ *
+ * Ecran de vidéo.
+ *
+ */
 public class VideoScreen {
 
 	private JFrame frame;
+	private Label frameLabel = new Label("");
+	private final JLabel contentLabel = new JLabel("");
 	private String path;
-	private int currentFrame = 0;
 	private VideoReader video;
-	private JLabel contentLabel = new JLabel("");
-	private boolean play = false;
-
-	Rect zoneModif = new Rect();
-	List<Rect> rects = new ArrayList<>();
-
-	public List<Integer> getNbPerFrame() {
-		return this.video.getNbPerFrame();
-	}
-
-	public List<Rect> getRectPerFrame() {
-		return this.rects;
-	}
-
-	public List<List<Rectangle>> getRectPeoplePerFrame() {
-		return this.video.getRectPeoplePerFrame();
-	}
-
-	final Point rectPoint1 = new Point();
-	final Point rectPoint2 = new Point();
-	final Scalar rectColor = new Scalar(255, 0, 0);
-	private int frameoff = 1;
-
-	public boolean isPlay() {
-		return this.play;
-	}
-
-	public void setPlay(boolean play) {
-		this.play = play;
-	}
-
-	Label frameLabel = new Label("");
 	private boolean goToStat;
 	private boolean goToMenu;
 	private boolean hogVisibility = true;
-
-	public void setup() {
-		this.video = new VideoReader(this.getPath());
-		this.video.setHogVisible(this.isHogVisible());
-		this.video.setFrameoff(this.getFrameoff());
-		this.video.init();
-		this.currentFrame = 0;
-		this.refresh();
-	}
-
-	public boolean isGoToMenu() {
-		return this.goToMenu;
-	}
-
-	public void setGoToMenu(boolean goToMenu) {
-		this.goToMenu = goToMenu;
-	}
-
-	public boolean isGoToStat() {
-		return this.goToStat;
-	}
-
-	public void setGoToStat(boolean goToStat) {
-		this.goToStat = goToStat;
-	}
+	private boolean play = false;
+	private int currentFrame = 0;
+	private int frameoff = 1;
+	private Rect zoneModif = new Rect();
+	private List<Rect> rects = new ArrayList<>();
+	private final Point rectPoint1 = new Point();
+	private final Point rectPoint2 = new Point();
+	private final Scalar rectColor = new Scalar(255, 0, 0);
 
 	/**
-	 * Launch the application.
-	 */
-
-	public void setVisible(boolean bool) {
-		this.frame.setVisible(bool);
-	}
-
-	/**
-	 * Create the application.
+	 * Constructeur de l'écran vidéo.
 	 */
 	public VideoScreen() {
 		this.initialize();
 	}
 
-	public void setFrameSize(Dimension dim) {
-		this.frame.setSize(dim.width, dim.height);
-	}
-
-	public Dimension getFrameSize() {
-		return this.frame.getSize();
-	}
-
-	public int getX() {
-		return this.frame.getX();
-	}
-
-	public int getY() {
-		return this.frame.getY();
-	}
-
-	public void setLocation(int x, int y) {
-		this.frame.setLocation(x, y);
-	}
-
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre.
 	 */
 	private void initialize() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
 		this.frame.setResizable(true);
@@ -176,7 +105,7 @@ public class VideoScreen {
 		final Button nextButton = new Button("Next");
 		nextButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				if ((VideoScreen.this.currentFrame + 5) < VideoScreen.this.video.size()) {
 					VideoScreen.this.moveFrame(5);
 				}
@@ -188,7 +117,7 @@ public class VideoScreen {
 		final Button previousButton = new Button("Previous");
 		previousButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				if ((VideoScreen.this.currentFrame - 5) > 0) {
 					VideoScreen.this.moveFrame(-5);
 				}
@@ -200,7 +129,7 @@ public class VideoScreen {
 		final Button playButton = new Button("Play/Pause");
 		playButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(final ActionEvent arg0) {
 				if (VideoScreen.this.isPlay()) {
 					VideoScreen.this.setPlay(false);
 				} else {
@@ -220,9 +149,9 @@ public class VideoScreen {
 		final java.awt.List rectList = new java.awt.List();
 		rectList.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(final MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					int selectedItem = rectList.getSelectedIndex();
+					final int selectedItem = rectList.getSelectedIndex();
 					rectList.remove(selectedItem);
 					VideoScreen.this.rects.remove(selectedItem);
 					VideoScreen.this.refresh();
@@ -246,7 +175,7 @@ public class VideoScreen {
 		final TextField gotoTextField = new TextField();
 		gotoTextField.addTextListener(new TextListener() {
 			@Override
-			public void textValueChanged(TextEvent arg0) {
+			public void textValueChanged(final TextEvent arg0) {
 				if (gotoTextField.getText().matches("^[0-9]+$")
 						&& (Integer.parseInt(gotoTextField.getText()) < VideoScreen.this.video.size())) {
 					VideoScreen.this.setPlay(false);
@@ -262,41 +191,41 @@ public class VideoScreen {
 
 		menuLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(final MouseEvent arg0) {
 				VideoScreen.this.setGoToMenu(true);
 			}
 		});
 
 		statLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(final MouseEvent arg0) {
 				VideoScreen.this.setGoToStat(true);
 			}
 		});
 
 		this.contentLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mousePressed(MouseEvent e) {
-				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
-				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
+			public void mousePressed(final MouseEvent e) {
+				final float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+				final float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
 				VideoScreen.this.zoneModif.x = (int) (e.getX() / xlen);
 				VideoScreen.this.zoneModif.y = (int) (e.getY() / ylen);
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
-				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
-				double[] pt = new double[2];
+			public void mouseReleased(final MouseEvent e) {
+				final float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+				final float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
+				final double[] pt = new double[2];
 				pt[0] = e.getX() / xlen;
 				pt[1] = e.getY() / ylen;
 				if (pt[0] < VideoScreen.this.zoneModif.x) {
-					double tmp = VideoScreen.this.zoneModif.x;
+					final double tmp = VideoScreen.this.zoneModif.x;
 					VideoScreen.this.zoneModif.x = (int) pt[0];
 					pt[0] = tmp;
 				}
 				if (pt[1] < VideoScreen.this.zoneModif.y) {
-					double tmp = VideoScreen.this.zoneModif.y;
+					final double tmp = VideoScreen.this.zoneModif.y;
 					VideoScreen.this.zoneModif.y = (int) pt[1];
 					pt[1] = tmp;
 				}
@@ -311,9 +240,9 @@ public class VideoScreen {
 
 		this.frame.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent arg0) {
-				float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
-				float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
+			public void componentResized(final ComponentEvent arg0) {
+				final float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+				final float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
 				VideoScreen.this.contentLabel.setBounds((int) (50 * xlen), (int) (31 * ylen), (int) (750 * xlen),
 						(int) (465 * ylen));
 				menuLabel.setBounds((int) (740 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
@@ -331,15 +260,130 @@ public class VideoScreen {
 		});
 	}
 
+	// Getters
+
+	public int getCurrentFrame() {
+		return this.currentFrame;
+	}
+
+	public Dimension getFrameSize() {
+		return this.frame.getSize();
+	}
+
+	public List<Integer> getNbPerFrame() {
+		return this.video.getNbPerFrame();
+	}
+
+	public List<List<Rectangle>> getRectPeoplePerFrame() {
+		return this.video.getRectPeoplePerFrame();
+	}
+
+	public List<Rect> getRectPerFrame() {
+		return this.rects;
+	}
+
+	public boolean isGoToMenu() {
+		return this.goToMenu;
+	}
+
+	public boolean isGoToStat() {
+		return this.goToStat;
+	}
+
+	public boolean isPlay() {
+		return this.play;
+	}
+
+	public int size() {
+		return this.video.size();
+	}
+
+	// Setters
+
+	public void setCurrentFrame(final int currentFrame) {
+		this.currentFrame = currentFrame;
+	}
+
+	public void setFrameoff(final int frameoff) {
+		this.frameoff = frameoff;
+	}
+
+	public void setFrameSize(final Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public void setGoToMenu(final boolean goToMenu) {
+		this.goToMenu = goToMenu;
+	}
+
+	public void setGoToStat(final boolean goToStat) {
+		this.goToStat = goToStat;
+	}
+
+	public void setHogVisible(final boolean hogVisible) {
+		this.hogVisibility = hogVisible;
+	}
+
+	public void setLocation(final int x, final int y) {
+		this.frame.setLocation(x, y);
+	}
+
+	public void setPath(final String path) {
+		this.path = path;
+	}
+
+	public void setPlay(final boolean play) {
+		this.play = play;
+	}
+
+	public void setVisible(final boolean bool) {
+		this.frame.setVisible(bool);
+	}
+
+	// Methodes
+
+	/**
+	 * Prépare la fenêtre video avant son affichage afin qu'elle puisse traiter la
+	 * vidéo en amont.
+	 */
+	public void setup() {
+		this.video = new VideoReader(this.path);
+		this.video.setHogVisible(this.hogVisibility);
+		this.video.setFrameoff(this.frameoff);
+		this.video.init();
+		this.currentFrame = 0;
+		this.refresh();
+	}
+
+	/**
+	 * Déplace le frame active d'une certaine quantité.
+	 *
+	 * @param move
+	 *            : La quantité de frame à décaler (entier relatif).
+	 * @return true si le décalage est possible (et réalisé), false sinon.
+	 */
+	public boolean moveFrame(final int move) {
+		if ((this.currentFrame + move) < this.video.size()) {
+			VideoScreen.this.currentFrame += move;
+			VideoScreen.this.refresh();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Mise à jour graphique de la fenêtre
+	 */
 	public void refresh() {
-		Mat tmp = this.video.getMat(this.currentFrame).clone();
+		final Mat tmp = this.video.getMat(this.currentFrame).clone();
 		for (int i = 0; i < this.rects.size(); i++) {
-			Rect rect = this.rects.get(i);
-			float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
-			float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
-			float yRatio = (float) this.contentLabel.getHeight()
+			final Rect rect = this.rects.get(i);
+			final float xlen = (float) VideoScreen.this.frame.getWidth() / 930;
+			final float ylen = (float) VideoScreen.this.frame.getHeight() / 624;
+			final float yRatio = (float) this.contentLabel.getHeight()
 					/ (float) this.video.getMat(this.currentFrame).height();
-			float xRatio = (float) this.contentLabel.getWidth() / (float) this.video.getMat(this.currentFrame).width();
+			final float xRatio = (float) this.contentLabel.getWidth()
+					/ (float) this.video.getMat(this.currentFrame).width();
 			this.rectPoint1.x = (rect.x / xRatio) * xlen;
 			this.rectPoint1.y = (rect.y / yRatio) * ylen;
 			this.rectPoint2.x = ((rect.x / xRatio) * xlen) + ((rect.width / xRatio) * xlen);
@@ -354,28 +398,28 @@ public class VideoScreen {
 		this.contentLabel.repaint();
 	}
 
-	public String getPath() {
-		return this.path;
+	/**
+	 * Convertit une BufferedImage en Mat(rice).
+	 *
+	 * @param bi
+	 *            : La BufferedImage à convertir.
+	 * @return mat : La matrice associée.
+	 */
+	public static Mat bufferedImageToMat(final BufferedImage bi) {
+		final Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
+		final byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
+		mat.put(0, 0, data);
+		return mat;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public int size() {
-		return this.video.size();
-	}
-
-	public VideoReader getVideo() {
-		return this.video;
-	}
-
-	public void setVideo(VideoReader video) {
-		this.video = video;
-	}
-
+	/**
+	 * Convertit une Mat(rice) en BufferedImage.
+	 *
+	 * @param frame
+	 *            : La matrice à convertir.
+	 * @return image : La BufferedImage associée.
+	 */
 	public static BufferedImage MatToBufferedImage(final Mat frame) {
-		// Mat() to BufferedImage
 		int type = 0;
 		if (frame.channels() == 1) {
 			type = BufferedImage.TYPE_BYTE_GRAY;
@@ -389,45 +433,5 @@ public class VideoScreen {
 		frame.get(0, 0, data);
 
 		return image;
-	}
-
-	public static Mat bufferedImageToMat(BufferedImage bi) {
-		Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
-		byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
-		mat.put(0, 0, data);
-		return mat;
-	}
-
-	public boolean moveFrame(int move) {
-		if ((this.currentFrame + move) < this.video.size()) {
-			VideoScreen.this.currentFrame += move;
-			VideoScreen.this.refresh();
-			return true;
-		}
-		return false;
-	}
-
-	public int getCurrentFrame() {
-		return this.currentFrame;
-	}
-
-	public void setCurrentFrame(int currentFrame) {
-		this.currentFrame = currentFrame;
-	}
-
-	public int getFrameoff() {
-		return this.frameoff;
-	}
-
-	public void setFrameoff(int frameoff) {
-		this.frameoff = frameoff;
-	}
-
-	public void setHogVisible(boolean hogVisible) {
-		this.hogVisibility = hogVisible;
-	}
-
-	public boolean isHogVisible() {
-		return this.hogVisibility;
 	}
 }

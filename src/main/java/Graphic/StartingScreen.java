@@ -24,58 +24,34 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileSystemView;
 
-@SuppressWarnings("unused")
+/**
+ *
+ * Ecran de démarrage.
+ *
+ */
 public class StartingScreen {
 
 	private JFrame frame;
 	private String path = new String("No path yet");
-	boolean fileChoosed = false;
+	private boolean fileChoosed = false;
 	private boolean goToVideo;
 	private boolean setupVideoReader = false;
 	private boolean quit = false;
-	private int frameoff = 1;
 	private boolean hogVisibility = true;
+	private int frameoff = 1;
 
 	/**
-	 * Launch the application.
-	 */
-
-	public void setVisible(boolean bool) {
-		this.frame.setVisible(bool);
-	}
-
-	/**
-	 * Create the application.
+	 * Constructeur de l'écran de démarrage.
 	 */
 	public StartingScreen() {
 		this.initialize();
 	}
 
-	public void setFrameSize(Dimension dim) {
-		this.frame.setSize(dim.width, dim.height);
-	}
-
-	public Dimension getFrameSize() {
-		return this.frame.getSize();
-	}
-
-	public int getX() {
-		return this.frame.getX();
-	}
-
-	public int getY() {
-		return this.frame.getY();
-	}
-
-	public void setLocation(int x, int y) {
-		this.frame.setLocation(x, y);
-	}
-
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise la fenêtre.
 	 */
 	private void initialize() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		final Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.frame = new JFrame();
 		this.frame.setResizable(true);
@@ -103,7 +79,7 @@ public class StartingScreen {
 		HOGVisibilityCheckbox.setState(true);
 		HOGVisibilityCheckbox.addItemListener(new ItemListener() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void itemStateChanged(final ItemEvent e) {
 				e.getStateChange();
 				if (e.getStateChange() == 1) {
 					StartingScreen.this.setHogVisible(true);
@@ -119,7 +95,7 @@ public class StartingScreen {
 		final TextField indiceTextField = new TextField();
 		indiceTextField.addTextListener(new TextListener() {
 			@Override
-			public void textValueChanged(TextEvent e) {
+			public void textValueChanged(final TextEvent e) {
 				if (indiceTextField.getText().matches("^[0-9]+$")) {
 					StartingScreen.this.setFrameoff(Integer.parseInt(indiceTextField.getText()));
 				}
@@ -194,7 +170,7 @@ public class StartingScreen {
 
 		browserButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				final JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 				final int returnValue = jfc.showOpenDialog(null);
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -209,7 +185,7 @@ public class StartingScreen {
 
 		playButton.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				if (StartingScreen.this.fileChoosed == false) {
 					browserLabel.setBackground(Color.RED);
 				} else {
@@ -220,7 +196,7 @@ public class StartingScreen {
 
 		quitLabel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(final MouseEvent arg0) {
 				StartingScreen.this.setQuit(true);
 				StartingScreen.this.frame.dispose();
 			}
@@ -228,9 +204,9 @@ public class StartingScreen {
 
 		this.frame.addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent arg0) {
-				float xlen = (float) StartingScreen.this.frame.getWidth() / 930;
-				float ylen = (float) StartingScreen.this.frame.getHeight() / 624;
+			public void componentResized(final ComponentEvent arg0) {
+				final float xlen = (float) StartingScreen.this.frame.getWidth() / 930;
+				final float ylen = (float) StartingScreen.this.frame.getHeight() / 624;
 				playButton.setBounds((int) (337 * xlen), (int) (372 * ylen), (int) (200 * xlen), (int) (65 * ylen));
 				indiceTextField.setBounds((int) (191 * xlen), (int) (372 * ylen), (int) (24 * xlen), (int) (24 * ylen));
 				indiceLabel.setBounds((int) (60 * xlen), (int) (369 * ylen), (int) (125 * xlen), (int) (24 * ylen));
@@ -252,51 +228,71 @@ public class StartingScreen {
 		});
 	}
 
-	public void setHogVisible(boolean b) {
-		this.hogVisibility = b;
+	// Getters
+
+	public int getFrameoff() {
+		return this.frameoff;
 	}
 
-	public boolean isHogVisible() {
-		return this.hogVisibility;
-	}
-
-	public boolean isGoToVideo() {
-		return this.goToVideo;
-	}
-
-	public void setGoToVideo(boolean goToVideo) {
-		this.goToVideo = goToVideo;
+	public Dimension getFrameSize() {
+		return this.frame.getSize();
 	}
 
 	public String getPath() {
 		return this.path;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public int getX() {
+		return this.frame.getX();
 	}
 
-	public boolean isSetupVideoReader() {
-		return this.setupVideoReader;
+	public int getY() {
+		return this.frame.getY();
 	}
 
-	public void setSetupVideoReader(boolean setupVideoReader) {
-		this.setupVideoReader = setupVideoReader;
+	public boolean isGoToVideo() {
+		return this.goToVideo;
+	}
+
+	public boolean isHogVisible() {
+		return this.hogVisibility;
 	}
 
 	public boolean isQuit() {
 		return this.quit;
 	}
 
-	public void setQuit(boolean quit) {
+	public boolean isSetupVideoReader() {
+		return this.setupVideoReader;
+	}
+
+	// Setters
+
+	public void setFrameoff(final int frameoff) {
+		this.frameoff = frameoff;
+	}
+
+	public void setFrameSize(final Dimension dim) {
+		this.frame.setSize(dim.width, dim.height);
+	}
+
+	public void setGoToVideo(final boolean goToVideo) {
+		this.goToVideo = goToVideo;
+	}
+
+	public void setHogVisible(final boolean b) {
+		this.hogVisibility = b;
+	}
+
+	public void setQuit(final boolean quit) {
 		this.quit = quit;
 	}
 
-	public int getFrameoff() {
-		return this.frameoff;
+	public void setSetupVideoReader(final boolean setupVideoReader) {
+		this.setupVideoReader = setupVideoReader;
 	}
 
-	public void setFrameoff(int frameoff) {
-		this.frameoff = frameoff;
+	public void setVisible(final boolean bool) {
+		this.frame.setVisible(bool);
 	}
 }
