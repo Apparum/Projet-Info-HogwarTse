@@ -271,6 +271,7 @@ public class VideoReader {
 			listInter.add(maxLabel);
 			maxLabel++;
 		}
+		Rectangle previous = new Rectangle();
 		this.listLabel.add(listInter);
 		for (int k = 1; k < this.rects.size(); k++) {
 			List<Integer> listInter1 = new ArrayList<>();
@@ -285,10 +286,11 @@ public class VideoReader {
 					if (intersectArea > maxArea) {
 						maxArea = intersectArea;
 						indiceMax = compteur;
+						previous = previousRect;
 					}
 					compteur = compteur + 1;
 				}
-				if (maxArea > this.getArea(actualRect) / 2) {
+				if (maxArea > this.getArea(previous) / 3 || maxArea > this.getArea(actualRect) / 3) {
 					listInter1.add(this.listLabel.get(k - 1).get(indiceMax));
 				} else {
 					listInter1.add(maxLabel);
