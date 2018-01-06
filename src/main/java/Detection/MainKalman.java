@@ -43,7 +43,9 @@ public class MainKalman {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		// System.loadLibrary("opencv_java2410");
 	}
-
+	
+	private List<Integer> listNbPeople = new ArrayList<>();
+	private List<Mat> listMat = new ArrayList<>();
 	static Mat imag = null;
 	static Mat orgin = null;
 	static Mat kalman = null;
@@ -130,7 +132,7 @@ public class MainKalman {
 		return listListRect;
 	}
 	
-	public static List<Object> process2(VideoCapture camera) throws InterruptedException{
+	public  List<Object> process2(VideoCapture camera) throws InterruptedException{
 		
 		Mat frame = new Mat();
 		Mat outbox = new Mat();
@@ -216,7 +218,7 @@ public class MainKalman {
 						Imgproc.circle(imag, pt, 1, new Scalar(0, 0, 255), 2);
 						compteur++;
 					}
-					nbPeople.add(compteur);
+					this.listNbPeople.add(compteur);
 				} else if (array.size() == 0) {
 					tracker.updateKalman(imag, detections);
 				}
@@ -245,7 +247,7 @@ public class MainKalman {
 						new Scalar(255, 255, 255), 1);
 */
 			}
-			listMat.add(imag);
+			this.listMat.add(imag);
 			i = 1;
 		}
 		
@@ -255,6 +257,7 @@ public class MainKalman {
 		
 		return listObject;
 	}
+	
 
 	// background substractionMOG2
 	protected static void processFrame(VideoCapture capture, Mat mRgba, Mat mFGMask, BackgroundSubtractorMOG2 mBGSub) {
@@ -314,6 +317,14 @@ public class MainKalman {
 
 		v.release();
 		return rect_array;
+	}
+
+	public List<Mat> getListMat() {
+		return this.listMat;
+	}
+
+	public List<Integer> getListNbPeople() {
+		return this.listNbPeople;
 	}
 
 }

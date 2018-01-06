@@ -36,15 +36,15 @@ public class VideoReader {
 	private String nomVideo;
 	private final String path;
 	private final HOGDetection hog = new HOGDetection();
-	private final MainKalman kalman = new MainKalman();
+	
 	private final Scalar rectColor = new Scalar(0, 255, 0);
 	private int frameoff = 1;
 	private boolean hogVisibility = true;
 	private boolean hogOrKalman = true; // 1 = hog, 0 = kalman
-	private final List<Mat> frames = new ArrayList<>();
+	private List<Mat> frames = new ArrayList<>();
 	private final List<Mat> framesClone = new ArrayList<>();
 	private List<List<Rectangle>> rects = new ArrayList<>();
-	private final List<Integer> nbPerFrame = new ArrayList<>();
+	private List<Integer> nbPerFrame = new ArrayList<>();
 	private final List<List<Integer>> listLabel = new ArrayList<>();
 
 	/**
@@ -71,34 +71,46 @@ public class VideoReader {
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		System.out.println("There are " + size + " frames");
 
+		// Jusqu'à maintenant vous avez pas vu Kalman, donc false pour ce qui était avant 
+		// et true pour le nouveau truc
+		boolean vraiKalman = true;
 		///////////// HOG ////////////////
 		if (this.hogOrKalman) {
 			this.initHOG();
+			vraiKalman = false;
 		}
 
 		////////// KALMAN /////////////
 		else {
-			this.initKalman();
+			if(vraiKalman) {
+				this.initKalman2();
+			}
+			else {
+				this.initKalman();
+			}
 		}
-
-		this.labellisation();
-		this.affichageMat();
+		
+		if(!vraiKalman) {
+			this.labellisation();
+			this.affichageMat();
+		}
 
 		System.out.println("Loading completed !");
 	}
 	
-	/*
+	
 	private void initKalman2() {
-		List<Object> listObject = new ArrayList<>();
+		MainKalman kalman = new MainKalman();
 		try {
-			listObject = MainKalman.process2(this.video);
+			kalman.process2(this.video);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		this.frames = kalman.getListMat();
+		this.nbPerFrame = kalman.getListNbPeople();
 	}
-	*/
+	
 
 	/*
 	 * Fonction qui contient le code de traitement de la vidéo en utilisant la
@@ -147,6 +159,7 @@ public class VideoReader {
 	 */
 	private void initKalman() {
 		final Mat frame = new Mat();
+		
 		try {
 			this.rects = MainKalman.process(this.video);
 			System.out.println("Fin du chargement de Kalman !");
