@@ -52,7 +52,6 @@ public class MainKalman {
 
 	// Il faudra ouvrir la camera avant
 	public static List<List<Rectangle>> process(VideoCapture camera) throws InterruptedException {
-		System.out.println("Let's go processing");
 		
 		List<List<Rectangle>> listListRect = new ArrayList<>();
 		
@@ -60,7 +59,6 @@ public class MainKalman {
 		Mat outbox = new Mat();
 		Mat diffFrame = null;
 		Vector<Rect> array = new Vector<Rect>();
-		
 
 		// On initialise le background substractor !
 		BackgroundSubtractorMOG2 mBGSub = Video.createBackgroundSubtractorMOG2();
@@ -70,7 +68,6 @@ public class MainKalman {
 
 		int i = 0, currentFrame = 1;
 		double size = camera.get(Videoio.CAP_PROP_FRAME_COUNT);
-		System.out.println("On a initialisé tout le bazar de kalman");
 		while (true) {
 			if (!vraiKalman) {
 				List<Rectangle> listRect = new ArrayList<>();

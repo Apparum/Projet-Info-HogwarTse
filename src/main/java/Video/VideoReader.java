@@ -73,62 +73,33 @@ public class VideoReader {
 		Path fichier = Paths.get(this.nomVideo + ".txt");
 		boolean dejaVu = Files.exists(fichier);
 
-		///////////// HOG////////////////
-
+		///////////// HOG ////////////////
 		if (this.hogOrKalman) {
 			this.initHOG();
-			/*
-			while (this.video.read(frame)) {
-				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-				// On ne fait la détection que si on n'a pas le fichier correspondant.
-				if (!dejaVu) {
-					if ((currentFrame % this.frameoff) == 0) {
-						final List<Rectangle> detected = this.hog.detect(frame);
-						this.rects.add(detected);
-						this.nbPerFrame.add(detected.size());
-					} else {
-						this.rects.add(new ArrayList<Rectangle>());
-					}
-				}
-				this.framesClone.add(frame.clone());
-				currentFrame += 1;
-			}
-			// On charge les rectangles si le fichier existe(déjà interpollé).
-			if (dejaVu) {
-				System.out.println("The video was already in memory");
-				this.rects = Loading.charger(this.nomVideo);
-				for (final List<Rectangle> image : this.rects) {
-					this.nbPerFrame.add(image.size());
-				}
-			}
-			// Sinon on interpole ceux calculés dans la boucle while.
-			else {
-				this.rects = this.interpolation(this.rects);
-				Saving.sauvegarder(this.nomVideo, this.rects);
-			}
-			*/
 		}
-		///////////////////////////
 
 		////////// KALMAN /////////////
 		else {
 			this.initKalman();
 		}
-		///////////////////////
 
 		this.labellisation();
 		this.affichageMat();
 
 		System.out.println("Loading completed !");
 	}
-	
+
+	/*
+	 * Fonction qui contient le code de traitement de la vidéo en utilisant la
+	 * méthode HOG
+	 */
 	private void initHOG() {
 		final Mat frame = new Mat();
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 		Path fichier = Paths.get(this.nomVideo + ".txt");
 		boolean dejaVu = Files.exists(fichier);
-		
+
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			// On ne fait la détection que si on n'a pas le fichier correspondant.
@@ -158,11 +129,14 @@ public class VideoReader {
 			Saving.sauvegarder(this.nomVideo, this.rects);
 		}
 	}
-	
+
+	/*
+	 * Fonction qui contient le code de traitement de la vidéo avec la méthode de
+	 * supression du fond et avec la méthode d'interpolation du filtre de Kalman
+	 */
 	private void initKalman() {
 		final Mat frame = new Mat();
 		try {
-			System.out.println("Let's go processing Kalman");
 			this.rects = MainKalman.process(this.video);
 			System.out.println("Fin du chargement de Kalman !");
 		} catch (final InterruptedException e) {
@@ -283,7 +257,7 @@ public class VideoReader {
 		int maxArea;
 		boolean condition;
 
-		for (final List<Rectangle> listRect : listImg) {
+		for (int k = 0; k < listImg.size(); k++) {
 			if ((compteur > 0) && (compteur < (listImg.size() - 1))) {
 				for (final Rectangle rectPrevious : listImg.get(compteur - 1)) {
 					maxArea = 0;
