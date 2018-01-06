@@ -70,8 +70,6 @@ public class VideoReader {
 		this.video = new VideoCapture(this.path);
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		System.out.println("There are " + size + " frames");
-		Path fichier = Paths.get(this.nomVideo + ".txt");
-		boolean dejaVu = Files.exists(fichier);
 
 		///////////// HOG ////////////////
 		if (this.hogOrKalman) {
@@ -88,6 +86,19 @@ public class VideoReader {
 
 		System.out.println("Loading completed !");
 	}
+	
+	/*
+	private void initKalman2() {
+		List<Object> listObject = new ArrayList<>();
+		try {
+			listObject = MainKalman.process2(this.video);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	*/
 
 	/*
 	 * Fonction qui contient le code de traitement de la vidéo en utilisant la

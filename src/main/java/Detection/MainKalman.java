@@ -129,6 +129,132 @@ public class MainKalman {
 		}
 		return listListRect;
 	}
+	
+	public static List<Object> process2(VideoCapture camera) throws InterruptedException{
+		
+		Mat frame = new Mat();
+		Mat outbox = new Mat();
+		Mat diffFrame = null;
+		Vector<Rect> array = new Vector<Rect>();
+		
+		// On initialise le background substractor !
+		BackgroundSubtractorMOG2 mBGSub = Video
+				.createBackgroundSubtractorMOG2();
+
+		tracker = new Tracker((float) CONFIG._dt,
+				(float) CONFIG._Accel_noise_mag, CONFIG._dist_thres,
+				CONFIG._maximum_allowed_skipped_frames,
+				CONFIG._max_trace_length);
+
+		// Thread.sleep(1000);
+		// VideoCapture camera = new VideoCapture(0);
+		
+/*
+		if (!camera.isOpened()) {
+			System.out.print("Can not open Camera, try it later.");
+			return;
+		}
+*/
+		List<Integer> nbPeople = new ArrayList<>();
+		List<Mat> listMat = new ArrayList<>();
+		
+		int i = 0;
+		while (true) {
+			if (!camera.read(frame))
+				break;
+			Imgproc.resize(frame, frame, new Size(CONFIG.FRAME_WIDTH, CONFIG.FRAME_HEIGHT),
+					0., 0., Imgproc.INTER_LINEAR);
+			imag = frame.clone();
+			orgin = frame.clone();
+			kalman = frame.clone();
+			if (i == 0) {
+				// jFrame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+				diffFrame = new Mat(outbox.size(), CvType.CV_8UC1);
+				diffFrame = outbox.clone();
+			}
+
+			if (i == 1) {
+				diffFrame = new Mat(frame.size(), CvType.CV_8UC1);
+				
+				//////////////// Pour la soustraction de contour ///////////////
+				// Permet d'extraire les objets dynamique du fond et modifie diffFrame en binaire
+				processFrame(camera, frame, diffFrame, mBGSub);
+				frame = diffFrame.clone();
+
+				array = detectionContours(diffFrame);
+				//////////////////////////////////////////////////////////////
+				Vector<Point> detections = new Vector<>();
+				// detections.clear();
+				Iterator<Rect> it = array.iterator();
+				
+				// Boucle pour faire une liste de tous les centres des objets
+				while (it.hasNext()) {
+					Rect obj = it.next();
+
+					int ObjectCenterX = (int) ((obj.tl().x + obj.br().x) / 2);
+					int ObjectCenterY = (int) ((obj.tl().y + obj.br().y) / 2);
+
+					Point pt = new Point(ObjectCenterX, ObjectCenterY);
+					detections.add(pt);
+				}
+				/////////
+
+				if (array.size() > 0) {
+					tracker.update(array, detections, imag);
+					Iterator<Rect> it3 = array.iterator();
+					int compteur =0;
+					while (it3.hasNext()) {
+						Rect obj = it3.next();
+
+						int ObjectCenterX = (int) ((obj.tl().x + obj.br().x) / 2);
+						int ObjectCenterY = (int) ((obj.tl().y + obj.br().y) / 2);
+
+						Point pt = new Point(ObjectCenterX, ObjectCenterY);
+
+						Imgproc.rectangle(imag, obj.br(), obj.tl(), new Scalar(
+								0, 255, 0), 2);
+						Imgproc.circle(imag, pt, 1, new Scalar(0, 0, 255), 2);
+						compteur++;
+					}
+					nbPeople.add(compteur);
+				} else if (array.size() == 0) {
+					tracker.updateKalman(imag, detections);
+				}
+
+				for (int k = 0; k < tracker.tracks.size(); k++) {
+					int traceNum = tracker.tracks.get(k).trace.size();
+					if (traceNum > 1) {
+						for (int jt = 1; jt < tracker.tracks.get(k).trace
+								.size(); jt++) {
+							Imgproc.line(imag,
+									tracker.tracks.get(k).trace.get(jt - 1),
+									tracker.tracks.get(k).trace.get(jt),
+									CONFIG.Colors[tracker.tracks.get(k).track_id % 9],
+									2, 4, 0);
+						}
+					}
+				}
+/*
+				Imgproc.putText(imag, "Input: " + CONFIG.filename, new Point(20, 360),
+						Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255),
+						1);
+				Imgproc.putText(imag,
+						"So track hien tai: " + tracker.tracks.size()
+								+ "     Da xoa: " + tracker.track_removed,
+						new Point(20, 50), Core.FONT_HERSHEY_PLAIN, 1,
+						new Scalar(255, 255, 255), 1);
+*/
+			}
+			listMat.add(imag);
+			i = 1;
+		}
+		
+		List<Object> listObject = new ArrayList<>();
+		listObject.add(listMat);
+		listObject.add(nbPeople);
+		
+		return listObject;
+	}
 
 	// background substractionMOG2
 	protected static void processFrame(VideoCapture capture, Mat mRgba, Mat mFGMask, BackgroundSubtractorMOG2 mBGSub) {
