@@ -36,6 +36,7 @@ import org.opencv.video.Video;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
+//@SuppressWarnings("unused")
 @SuppressWarnings("unused")
 public class MainKalman {
 	static {
@@ -47,6 +48,7 @@ public class MainKalman {
 	static Mat orgin = null;
 	static Mat kalman = null;
 	public static Tracker tracker;
+	private static boolean vraiKalman = false;
 
 	// Il faudra ouvrir la camera avant
 	public static List<List<Rectangle>> process(VideoCapture camera) throws InterruptedException {
@@ -58,6 +60,7 @@ public class MainKalman {
 		Mat outbox = new Mat();
 		Mat diffFrame = null;
 		Vector<Rect> array = new Vector<Rect>();
+		
 
 		// On initialise le background substractor !
 		BackgroundSubtractorMOG2 mBGSub = Video.createBackgroundSubtractorMOG2();
@@ -67,67 +70,65 @@ public class MainKalman {
 
 		int i = 0, currentFrame = 1;
 		double size = camera.get(Videoio.CAP_PROP_FRAME_COUNT);
+		System.out.println("On a initialisé tout le bazar de kalman");
 		while (true) {
-			List<Rectangle> listRect = new ArrayList<>();
-			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-			if (!camera.read(frame))
-				break;
-			//Imgproc.resize(frame, frame, new Size(CONFIG.FRAME_WIDTH, CONFIG.FRAME_HEIGHT), 0., 0.,
-			//		Imgproc.INTER_LINEAR);
-			imag = frame.clone();
-			orgin = frame.clone();
-			kalman = frame.clone();
-			if (i == 0) {
-				// jFrame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-				diffFrame = new Mat(outbox.size(), CvType.CV_8UC1);
-				diffFrame = outbox.clone();
-			}
-
-			if (i == 1) {
-				diffFrame = new Mat(frame.size(), CvType.CV_8UC1);
-
-				//////////////// Pour la soustraction de contour ///////////////
-				// Permet d'extraire les objets dynamique du fond et modifie diffFrame en
-				// binaire
-				processFrame(camera, frame, diffFrame, mBGSub);
-				frame = diffFrame.clone();
-
-				array = detectionContours(diffFrame);
-				//////////////////////////////////////////////////////////////
-				Vector<Point> detections = new Vector<>();
-				// detections.clear();
-				Iterator<Rect> it = array.iterator();
-
-				// Boucle pour faire une liste de tous les centres des objets
-				while (it.hasNext()) {
-					Rect obj = it.next();
-
-					int ObjectCenterX = (int) ((obj.tl().x + obj.br().x) / 2);
-					int ObjectCenterY = (int) ((obj.tl().y + obj.br().y) / 2);
-
-					Point pt = new Point(ObjectCenterX, ObjectCenterY);
-					detections.add(pt);
+			if (!vraiKalman) {
+				List<Rectangle> listRect = new ArrayList<>();
+				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
+				if (!camera.read(frame))
+					break;
+				//Imgproc.resize(frame, frame, new Size(CONFIG.FRAME_WIDTH, CONFIG.FRAME_HEIGHT), 0., 0.,
+				//		Imgproc.INTER_LINEAR);
+				imag = frame.clone();
+				orgin = frame.clone();
+				kalman = frame.clone();
+				if (i == 0) {
+					// jFrame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+					diffFrame = new Mat(outbox.size(), CvType.CV_8UC1);
+					diffFrame = outbox.clone();
 				}
-				// ///////
+				if (i == 1) {
+					diffFrame = new Mat(frame.size(), CvType.CV_8UC1);
 
-				if (array.size() > 0) {
-					tracker.update(array, detections, imag);
-					Iterator<Rect> it3 = array.iterator();
-					while (it3.hasNext()) {
-						Rect obj = it3.next();
-						listRect.add(new Rectangle(obj.x, obj.y, obj.width, obj.height));
+					//////////////// Pour la soustraction de contour ///////////////
+					// Permet d'extraire les objets dynamique du fond et modifie diffFrame en
+					// binaire
+					processFrame(camera, frame, diffFrame, mBGSub);
+					frame = diffFrame.clone();
+
+					array = detectionContours(diffFrame);
+					//////////////////////////////////////////////////////////////
+					Vector<Point> detections = new Vector<>();
+					// detections.clear();
+					Iterator<Rect> it = array.iterator();
+
+					// Boucle pour faire une liste de tous les centres des objets
+					while (it.hasNext()) {
+						Rect obj = it.next();
+
 						int ObjectCenterX = (int) ((obj.tl().x + obj.br().x) / 2);
 						int ObjectCenterY = (int) ((obj.tl().y + obj.br().y) / 2);
 
 						Point pt = new Point(ObjectCenterX, ObjectCenterY);
+						detections.add(pt);
 					}
-				} else if (array.size() == 0) {
-					tracker.updateKalman(imag, detections);
+					// ///////
+
+					if (array.size() > 0) {
+						tracker.update(array, detections, imag);
+						Iterator<Rect> it3 = array.iterator();
+						while (it3.hasNext()) {
+							Rect obj = it3.next();
+							listRect.add(new Rectangle(obj.x, obj.y, obj.width, obj.height));
+						}
+					} else if (array.size() == 0) {
+						tracker.updateKalman(imag, detections);
+					}
 				}
+				i = 1;
+				currentFrame++;
+				listListRect.add(listRect);
 			}
-			i = 1;
-			currentFrame++;
-			listListRect.add(listRect);
 		}
 		return listListRect;
 	}
