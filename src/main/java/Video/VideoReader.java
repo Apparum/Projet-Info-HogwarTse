@@ -70,47 +70,20 @@ public class VideoReader {
 		this.video = new VideoCapture(this.path);
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		System.out.println("There are " + size + " frames");
-
-		// Jusqu'à maintenant vous avez pas vu Kalman, donc false pour ce qui était avant 
-		// et true pour le nouveau truc
-		boolean vraiKalman = true;
+		
 		///////////// HOG ////////////////
 		if (this.hogOrKalman) {
 			this.initHOG();
-			vraiKalman = false;
-		}
-
-		////////// KALMAN /////////////
-		else {
-			if(vraiKalman) {
-				this.initKalman2();
-			}
-			else {
-				this.initKalman();
-			}
-		}
-		
-		if(!vraiKalman) {
 			this.labellisation();
 			this.affichageMat();
 		}
 
+		////////// KALMAN /////////////
+		else {
+			this.initKalman2();
+		}
 		System.out.println("Loading completed !");
 	}
-	
-	
-	private void initKalman2() {
-		MainKalman kalman = new MainKalman();
-		try {
-			kalman.process2(this.video);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.frames = kalman.getListMat();
-		this.nbPerFrame = kalman.getListNbPeople();
-	}
-	
 
 	/*
 	 * Fonction qui contient le code de traitement de la vidéo en utilisant la
@@ -122,7 +95,8 @@ public class VideoReader {
 		int currentFrame = 0;
 		Path fichier = Paths.get(this.nomVideo + ".txt");
 		boolean dejaVu = Files.exists(fichier);
-
+		
+		
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			// On ne fait la détection que si on n'a pas le fichier correspondant.
@@ -157,23 +131,16 @@ public class VideoReader {
 	 * Fonction qui contient le code de traitement de la vidéo avec la méthode de
 	 * supression du fond et avec la méthode d'interpolation du filtre de Kalman
 	 */
-	private void initKalman() {
-		final Mat frame = new Mat();
-		
+	private void initKalman2() {
+		MainKalman kalman = new MainKalman();
 		try {
-			this.rects = MainKalman.process(this.video);
-			System.out.println("Fin du chargement de Kalman !");
-		} catch (final InterruptedException e) {
+			kalman.process2(this.video);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			System.out.println("Erreur dans Kalman");
 		}
-		this.video = new VideoCapture(this.path);
-		while (this.video.read(frame)) {
-			this.framesClone.add(frame.clone());
-		}
-		for (int k = 0; k < this.rects.size(); k++) {
-			this.nbPerFrame.add(this.rects.get(k).size());
-		}
+		this.frames = kalman.getListMat();
+		this.nbPerFrame = kalman.getListNbPeople();
 	}
 
 	private void affichageMat() {

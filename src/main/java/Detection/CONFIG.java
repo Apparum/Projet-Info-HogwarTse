@@ -4,14 +4,6 @@ import java.awt.Toolkit;
 
 import org.opencv.core.Scalar;
 
-/**
- * CONFIG.java
- * TODO: 
- *
- * @author Kim Dinh Son
- * Email:sonkdbk@gmail.com
- */
-
 public class CONFIG {
 	// static String filename =
 	// "H:/VIDEO/Footage/Crowd_PETS09/S2/L2/Time_14-55/View_001/frame_%04d.jpg");

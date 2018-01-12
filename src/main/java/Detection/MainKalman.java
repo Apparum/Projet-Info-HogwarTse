@@ -71,9 +71,9 @@ public class MainKalman {
 		int i = 0, currentFrame = 1;
 		double size = camera.get(Videoio.CAP_PROP_FRAME_COUNT);
 		while (true) {
+			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			if (!vraiKalman) {
 				List<Rectangle> listRect = new ArrayList<>();
-				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 				if (!camera.read(frame))
 					break;
 				//Imgproc.resize(frame, frame, new Size(CONFIG.FRAME_WIDTH, CONFIG.FRAME_HEIGHT), 0., 0.,

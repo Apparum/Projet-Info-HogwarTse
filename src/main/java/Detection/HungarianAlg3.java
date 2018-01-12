@@ -4,14 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * HungarianAlg3.java
- * TODO: 
- *
- * @author Kim Dinh Son
- * Email:sonkdbk@gmail.com
- */
-
 public class HungarianAlg3 {
 	private final double[][] costMatrix;
 	private final int rows, cols, dim;

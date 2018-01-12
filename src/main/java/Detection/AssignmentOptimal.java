@@ -2,15 +2,6 @@ package Detection;
 
 import java.util.Vector;
 
-
-/**
- * AssignmentOptimal.java
- * TODO: 
- *
- * @author Kim Dinh Son
- * Email:sonkdbk@gmail.com
- */
-
 public class AssignmentOptimal {
 	public double Solve(double[][] DistMatrix,
 			Vector<Integer> Assignment) {

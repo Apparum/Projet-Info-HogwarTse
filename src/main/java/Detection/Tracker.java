@@ -9,12 +9,6 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-/**
- * Tracker.java TODO:
- * 
- * @author Kim Dinh Son Email:sonkdbk@gmail.com
- */
-
 public class Tracker extends JTracker {
 	int nextTractID = 0;
 	Vector<Integer> assignment = new Vector<>();

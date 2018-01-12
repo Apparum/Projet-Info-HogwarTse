@@ -1,16 +1,10 @@
 package Detection;
 
 import java.util.Vector;
-
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
-/**
- * JTracker.java TODO:
- * 
- * @author Kim Dinh Son Email:sonkdbk@gmail.com
- */
 
 public abstract class JTracker {
 
