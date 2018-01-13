@@ -75,6 +75,7 @@ public class VideoReader {
 		if (this.hogOrKalman) {
 			this.initHOG();
 			this.labellisation();
+			Saving.infoText(this.nomVideo, this.rects, this.listLabel);
 			this.affichageMat();
 		}
 

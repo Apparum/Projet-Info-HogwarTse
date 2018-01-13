@@ -144,7 +144,7 @@ public class StartingScreen {
 		contentTextArea.setForeground(Color.WHITE);
 		contentTextArea.setBackground(new Color(98, 104, 104));
 		contentTextArea.setText(
-				"From this menu, you can select the video you want to analyse from the \"browse file\" button on the right bottom corner.\r\nAlso if you want to slow the ips rate, change the factor in the box.\r\nFinally you can choose whether you want to use HOG or Kalman, and if you want to see the detection on the screen.");
+				"From this menu, you can select the video you want to analyse from the \"browse file\" button on the right bottom corner.\r\nAlso if you want to slow the ips rate, change the factor in the box.\r\nFinally you can choose whether you want to use HOG or Kalman, and if you want to see the detection on the screen.\r\nOn the video screen, you can drag and drop to create new area of interest.\r\nAnd to delete one area, simply double click on it in the list.\r\nHope you enjoy !");
 		contentTextArea.setBounds(93, 250, 723, 119);
 		this.frame.getContentPane().add(contentTextArea);
 

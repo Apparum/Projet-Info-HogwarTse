@@ -126,15 +126,6 @@ public class StatScreen {
 		previousButton.setBounds(279, 522, 79, 24);
 		this.frame.getContentPane().add(previousButton);
 
-		final Button playButton = new Button("TO DO");
-		playButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent arg0) {
-			}
-		});
-		playButton.setBounds(404, 522, 79, 24);
-		this.frame.getContentPane().add(playButton);
-
 		final TextField rectTextField = new TextField();
 		rectTextField.addTextListener(new TextListener() {
 			@Override
@@ -235,7 +226,6 @@ public class StatScreen {
 				videoLabel.setBounds((int) (50 * xlen), (int) (522 * ylen), (int) (134 * xlen), (int) (40 * ylen));
 				nextButton.setBounds((int) (530 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				previousButton.setBounds((int) (279 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
-				playButton.setBounds((int) (404 * xlen), (int) (522 * ylen), (int) (79 * xlen), (int) (24 * ylen));
 				StatScreen.this.refresh();
 			}
 		});
