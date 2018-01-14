@@ -25,7 +25,7 @@ public class Loading {
 	 * @return La liste des rectangle de détection.
 	 */
 	public static List<List<Rectangle>> charger(final String nom) {
-		final Path fichier = Paths.get(nom + ".txt");
+		final Path fichier = Paths.get("Saves/" + nom + ".txt");
 		final Charset charset = Charset.forName("US-ASCII");
 		final List<List<Rectangle>> video = new ArrayList<>();
 
