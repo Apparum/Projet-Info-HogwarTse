@@ -94,7 +94,7 @@ public class VideoReader {
 		final Mat frame = new Mat();
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
-		Path fichier = Paths.get("Saves/" + this.nomVideo + ".txt");
+		Path fichier = Paths.get(this.nomVideo + ".txt");
 		boolean dejaVu = Files.exists(fichier);
 		
 		

@@ -25,7 +25,7 @@ public class Saving {
 	 */
 	public static void sauvegarder(final String nom, final List<List<Rectangle>> video) {
 		String line = "";
-		final Path fichier = Paths.get("Saves/" + nom + ".txt");
+		final Path fichier = Paths.get(nom + ".txt");
 		final Charset charset = Charset.forName("US-ASCII");
 		if (!Files.exists(fichier)) {
 			try {
@@ -62,7 +62,7 @@ public class Saving {
 	 */
 	public static void infoText(String nomVideo, List<List<Rectangle>> rects, List<List<Integer>> listLabel) {
 		String line = "";
-		final Path fichier = Paths.get("Saves/StatsOf_" + nomVideo + ".txt");
+		final Path fichier = Paths.get("StatsOf_" + nomVideo + ".txt");
 		final Charset charset = Charset.forName("US-ASCII");
 		if (!Files.exists(fichier)) {
 			try {
