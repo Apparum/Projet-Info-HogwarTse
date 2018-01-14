@@ -95,35 +95,35 @@ Frame number 26
 	Person number 12 detected at (143.5,109.5)
 Frame number 27
 	Person number 12 detected at (143.0,103.0)
-	Person number 14 detected at (335.0,142.0)
+	Person number 14 detected at (337.0,142.0)
 Frame number 28
 	Person number 12 detected at (143.0,103.0)
-	Person number 15 detected at (20.5,166.0)
-	Person number 14 detected at (329.0,158.0)
+	Person number 15 detected at (19.5,166.0)
+	Person number 14 detected at (331.0,158.0)
 Frame number 29
 	Person number 16 detected at (106.0,159.0)
-	Person number 15 detected at (19.0,165.5)
-	Person number 14 detected at (323.0,174.0)
+	Person number 15 detected at (16.0,165.5)
+	Person number 14 detected at (325.0,174.0)
 	Person number 12 detected at (164.0,154.5)
 	Person number 17 detected at (70.5,117.0)
 Frame number 30
 	Person number 16 detected at (107.0,155.0)
-	Person number 15 detected at (19.0,164.0)
-	Person number 14 detected at (323.0,174.0)
+	Person number 14 detected at (325.0,174.0)
+	Person number 15 detected at (16.5,164.0)
 	Person number 17 detected at (72.0,117.0)
 	Person number 12 detected at (149.0,123.0)
 Frame number 31
 	Person number 16 detected at (106.0,154.0)
 	Person number 12 detected at (135.0,92.0)
 	Person number 17 detected at (73.0,118.5)
-	Person number 15 detected at (18.0,165.0)
+	Person number 15 detected at (15.5,165.0)
 	Person number 16 detected at (104.5,133.0)
 Frame number 32
 	Person number 16 detected at (105.0,156.0)
 	Person number 12 detected at (134.5,94.0)
 	Person number 12 detected at (158.5,134.0)
-	Person number 15 detected at (14.5,147.0)
-	Person number 15 detected at (15.0,172.5)
+	Person number 15 detected at (12.5,147.0)
+	Person number 15 detected at (13.0,172.5)
 	Person number 17 detected at (74.0,115.0)
 Frame number 33
 	Person number 16 detected at (101.0,133.0)
@@ -291,18 +291,18 @@ Frame number 75
 	Person number 31 detected at (221.0,152.0)
 	Person number 37 detected at (151.5,89.0)
 Frame number 76
-	Person number 38 detected at (17.5,134.0)
+	Person number 38 detected at (16.5,134.0)
 	Person number 37 detected at (149.0,88.5)
 	Person number 37 detected at (147.0,117.0)
 Frame number 77
 	Person number 37 detected at (147.0,90.5)
-	Person number 38 detected at (16.5,133.5)
+	Person number 38 detected at (14.0,133.5)
 	Person number 39 detected at (36.0,97.0)
 Frame number 78
 	Person number 39 detected at (35.5,95.0)
 	Person number 40 detected at (219.0,148.0)
 	Person number 37 detected at (144.5,90.5)
-	Person number 38 detected at (16.0,132.0)
+	Person number 38 detected at (13.5,132.0)
 Frame number 79
 	Person number 40 detected at (218.5,146.0)
 	Person number 39 detected at (33.5,95.0)
@@ -482,8 +482,8 @@ Frame number 129
 	Person number 45 detected at (37.0,90.0)
 	Person number 54 detected at (235.0,115.0)
 Frame number 130
-	Person number 52 detected at (105.0,148.5)
 	Person number 45 detected at (35.0,90.0)
+	Person number 52 detected at (105.0,148.5)
 Frame number 131
 	Person number 52 detected at (102.0,146.0)
 Frame number 132
@@ -502,14 +502,14 @@ Frame number 137
 	Person number 55 detected at (23.0,95.0)
 	Person number 57 detected at (89.5,144.5)
 Frame number 138
-	Person number 55 detected at (21.5,94.0)
+	Person number 55 detected at (20.5,94.0)
 	Person number 57 detected at (87.0,144.5)
 Frame number 139
-	Person number 55 detected at (20.5,96.5)
+	Person number 55 detected at (17.5,96.5)
 	Person number 57 detected at (84.5,143.5)
 	Person number 58 detected at (254.0,112.0)
 Frame number 140
-	Person number 55 detected at (20.0,95.0)
+	Person number 55 detected at (17.0,95.0)
 	Person number 57 detected at (83.5,144.5)
 	Person number 58 detected at (255.5,113.5)
 Frame number 141
@@ -565,16 +565,16 @@ Frame number 165
 Frame number 166
 	Person number 61 detected at (26.0,140.0)
 Frame number 167
-	Person number 61 detected at (23.5,139.5)
+	Person number 61 detected at (23.0,139.5)
 Frame number 168
-	Person number 61 detected at (22.0,140.0)
+	Person number 61 detected at (21.0,140.0)
 Frame number 169
 	Person number 61 detected at (21.0,138.0)
 Frame number 170
 	Person number 61 detected at (19.0,135.0)
 Frame number 171
-	Person number 61 detected at (17.5,137.0)
+	Person number 61 detected at (15.0,137.0)
 Frame number 172
-	Person number 61 detected at (16.5,135.0)
+	Person number 61 detected at (14.0,135.0)
 Frame number 173
 Frame number 174

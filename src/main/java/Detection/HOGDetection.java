@@ -19,7 +19,7 @@ public class HOGDetection {
 
 	public List<Rectangle> detect(Mat frame) {
 		HOGDescriptor hog = new HOGDescriptor(new Size(32, 64), new Size(8, 8), new Size(4, 4), new Size(4, 4), 9, 1,
-				-1, 1, 0.2, true, 16, false);
+				-1, 1, 0.2, true, 16);
 		MatOfFloat descriptors = HOGDescriptor.getDefaultPeopleDetector();
 		MatOfRect foundLocations = new MatOfRect();
 		MatOfDouble foundWeights = new MatOfDouble();
