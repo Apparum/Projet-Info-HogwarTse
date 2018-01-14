@@ -28,14 +28,15 @@ public class Saving {
 		final Path fichier;
 		switch (methode) {
 		case "Kalman":
-			fichier = Paths.get("K-" + nom + ".txt");
+			fichier = Paths.get("Saves/K-" + nom + ".txt");
 			break;
 		case "HOG":
-			fichier = Paths.get("H-" + nom + ".txt");
+			fichier = Paths.get("Saves/H-" + nom + ".txt");
 			break;
 		default:
-			fichier = Paths.get(nom + ".txt");
+			fichier = Paths.get("Saves/" +nom + ".txt");
 		}
+
 		final Charset charset = Charset.forName("US-ASCII");
 		if (!Files.exists(fichier)) {
 			try {
@@ -76,7 +77,7 @@ public class Saving {
 	 */
 	public static void infoText(String nomVideo, List<List<Rectangle>> rects, List<List<Integer>> listLabel) {
 		String line = "";
-		final Path fichier = Paths.get("StatsOf_" + nomVideo + ".txt");
+		final Path fichier = Paths.get("Saves/StatsOf_" + nomVideo + ".txt");
 		final Charset charset = Charset.forName("US-ASCII");
 		if (!Files.exists(fichier)) {
 			try {
@@ -105,6 +106,7 @@ public class Saving {
 		try (BufferedWriter buffer = Files.newBufferedWriter(fichier, charset)) {
 			buffer.write(line);
 		} catch (final IOException ioe) {
+			
 		}
 	}
 }

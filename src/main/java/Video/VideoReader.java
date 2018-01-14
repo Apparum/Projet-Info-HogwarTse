@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,9 @@ public class VideoReader {
 		final Mat frame = new Mat();
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
-		boolean dejaVu = Files.exists(Paths.get("H-" + this.nomVideo + ".txt"));
+
+		Path fichier = Paths.get("Saves/" + this.nomVideo + ".txt");
+		boolean dejaVu = Files.exists(fichier);
 
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");

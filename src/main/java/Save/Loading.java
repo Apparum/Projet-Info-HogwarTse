@@ -28,14 +28,15 @@ public class Loading {
 		final Path fichier;
 		switch (methode) {
 		case "Kalman":
-			fichier = Paths.get("K-" + nom + ".txt");
+			fichier = Paths.get("Saves/K-" + nom + ".txt");
 			break;
 		case "HOG":
-			fichier = Paths.get("H-" + nom + ".txt");
+			fichier = Paths.get("Saves/H-" + nom + ".txt");
 			break;
 		default:
-			fichier = Paths.get(nom + ".txt");
+			fichier = Paths.get("Saves/" + nom + ".txt");
 		}
+
 		final Charset charset = Charset.forName("US-ASCII");
 		final List<List<Rectangle>> video = new ArrayList<>();
 
