@@ -23,9 +23,19 @@ public class Saving {
 	 * @param video
 	 *            : liste de liste des rectangles détectés à enregistrer.
 	 */
-	public static void sauvegarder(final String nom, final List<List<Rectangle>> video) {
+	public static void sauvegarder(final String nom, final List<List<Rectangle>> video, final String methode) {
 		String line = "";
-		final Path fichier = Paths.get(nom + ".txt");
+		final Path fichier;
+		switch(methode){
+		case "Kalman":
+			fichier = Paths.get("K-" + nom + ".txt");
+			break;
+		case "HOG":
+			fichier = Paths.get("H-" + nom + ".txt");
+			break;
+		default:
+			fichier = Paths.get(nom + ".txt");
+		}
 		final Charset charset = Charset.forName("US-ASCII");
 		if (!Files.exists(fichier)) {
 			try {

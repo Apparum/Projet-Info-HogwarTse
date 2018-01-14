@@ -5,10 +5,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -16,18 +16,15 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
+
 import Detection.HOGDetection;
 import Detection.MainKalman;
 import Save.Loading;
 import Save.Saving;
 
 /**
- *
- * 
  * 
  * Lecteur de vidéo.
- *
- * 
  * 
  */
 
@@ -36,7 +33,7 @@ public class VideoReader {
 	private String nomVideo;
 	private final String path;
 	private final HOGDetection hog = new HOGDetection();
-	
+
 	private final Scalar rectColor = new Scalar(0, 255, 0);
 	private int frameoff = 1;
 	private boolean hogVisibility = true;
@@ -51,8 +48,6 @@ public class VideoReader {
 	 * 
 	 * Constructeur du lecture de la vidéo.
 	 *
-	 * 
-	 * 
 	 * @param path
 	 * 
 	 *            : Chemin menant à la vidéo considérée.
@@ -70,18 +65,14 @@ public class VideoReader {
 		this.video = new VideoCapture(this.path);
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		System.out.println("There are " + size + " frames");
-		
-		///////////// HOG ////////////////
+
 		if (this.hogOrKalman) {
 			this.initHOG();
 			this.labellisation();
 			Saving.infoText(this.nomVideo, this.rects, this.listLabel);
 			this.affichageMat();
-		}
-
-		////////// KALMAN /////////////
-		else {
-			this.initKalman2();
+		} else {
+			this.initKalman();
 		}
 		System.out.println("Loading completed !");
 	}
@@ -94,10 +85,8 @@ public class VideoReader {
 		final Mat frame = new Mat();
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
-		Path fichier = Paths.get(this.nomVideo + ".txt");
-		boolean dejaVu = Files.exists(fichier);
-		
-		
+		boolean dejaVu = Files.exists(Paths.get("H-" + this.nomVideo + ".txt"));
+
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
 			// On ne fait la détection que si on n'a pas le fichier correspondant.
@@ -116,7 +105,7 @@ public class VideoReader {
 		// On charge les rectangles si le fichier existe(déjà interpollé).
 		if (dejaVu) {
 			System.out.println("The video was already in memory");
-			this.rects = Loading.charger(this.nomVideo);
+			this.rects = Loading.charger(this.nomVideo, "HOG");
 			for (final List<Rectangle> image : this.rects) {
 				this.nbPerFrame.add(image.size());
 			}
@@ -124,7 +113,7 @@ public class VideoReader {
 		// Sinon on interpole ceux calculés dans la boucle while.
 		else {
 			this.rects = this.interpolation(this.rects);
-			Saving.sauvegarder(this.nomVideo, this.rects);
+			Saving.sauvegarder(this.nomVideo, this.rects, "HOG");
 		}
 	}
 
@@ -132,7 +121,7 @@ public class VideoReader {
 	 * Fonction qui contient le code de traitement de la vidéo avec la méthode de
 	 * supression du fond et avec la méthode d'interpolation du filtre de Kalman
 	 */
-	private void initKalman2() {
+	private void initKalman() {
 		MainKalman kalman = new MainKalman();
 		try {
 			kalman.process2(this.video);
@@ -209,21 +198,13 @@ public class VideoReader {
 	// Méthodes
 
 	/**
-	 * 
 	 * Calcule une moyenne entre deux nombres entiers.
-	 *
-	 * 
 	 * 
 	 * @param a
-	 * 
 	 *            : 1er nombre.
-	 * 
 	 * @param b
-	 * 
 	 *            : 2eme nombre.
-	 * 
 	 * @return La moyenne.
-	 * 
 	 */
 
 	private int avg(final int a, final int b) {
@@ -231,17 +212,11 @@ public class VideoReader {
 	}
 
 	/**
-	 * 
 	 * Calcule les rectangles interpolés entre des images successives.
-	 *
-	 * 
 	 * 
 	 * @param listImg
-	 * 
 	 *            : La liste des rectangles de chaque frame.
-	 * 
 	 * @return La liste des rectangles de chaque frame après interpolation.
-	 * 
 	 */
 
 	private List<List<Rectangle>> interpolation(final List<List<Rectangle>> listImg) {
@@ -332,7 +307,6 @@ public class VideoReader {
 					} else {
 						intersectArea = 0;
 					}
-					// System.out.println(actualRect.intersects(previousRect));
 					if (intersectArea > maxArea) {
 						maxArea = intersectArea;
 						indiceMax = compteur;

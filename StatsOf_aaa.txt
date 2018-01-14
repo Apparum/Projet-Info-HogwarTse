@@ -422,8 +422,8 @@ Frame number 112
 	Person number 47 detected at (147.0,145.5)
 	Person number 45 detected at (74.5,102.0)
 	Person number 49 detected at (208.0,112.5)
-	Person number 45 detected at (108.5,133.0)
 	Person number 48 detected at (284.0,119.5)
+	Person number 45 detected at (108.5,133.0)
 Frame number 113
 	Person number 45 detected at (72.0,95.0)
 	Person number 49 detected at (208.5,112.0)
@@ -447,8 +447,8 @@ Frame number 118
 	Person number 49 detected at (216.0,115.0)
 Frame number 119
 	Person number 45 detected at (59.0,90.5)
-	Person number 50 detected at (129.0,146.0)
 	Person number 49 detected at (219.0,114.5)
+	Person number 50 detected at (129.0,146.0)
 Frame number 120
 	Person number 45 detected at (56.5,92.0)
 	Person number 50 detected at (118.0,144.0)

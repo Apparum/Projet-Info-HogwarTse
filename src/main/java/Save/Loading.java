@@ -24,8 +24,18 @@ public class Loading {
 	 *            : Nom du fichier.
 	 * @return La liste des rectangle de détection.
 	 */
-	public static List<List<Rectangle>> charger(final String nom) {
-		final Path fichier = Paths.get(nom + ".txt");
+	public static List<List<Rectangle>> charger(final String nom, final String methode) {
+		final Path fichier;
+		switch(methode){
+		case "Kalman":
+			fichier = Paths.get("K-" + nom + ".txt");
+			break;
+		case "HOG":
+			fichier = Paths.get("H-" + nom + ".txt");
+			break;
+		default:
+			fichier = Paths.get(nom + ".txt");
+		}
 		final Charset charset = Charset.forName("US-ASCII");
 		final List<List<Rectangle>> video = new ArrayList<>();
 
