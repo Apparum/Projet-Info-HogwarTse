@@ -90,6 +90,7 @@ public class Saving {
 		try (BufferedWriter buffer = Files.newBufferedWriter(fichier, charset)) {
 			buffer.write(line);
 		} catch (final IOException ioe) {
+			
 		}
 	}
 }
