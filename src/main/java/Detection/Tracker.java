@@ -1,5 +1,7 @@
 package Detection;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.opencv.core.Core;
@@ -12,6 +14,7 @@ import org.opencv.imgproc.Imgproc;
 public class Tracker extends JTracker {
 	int nextTractID = 0;
 	Vector<Integer> assignment = new Vector<>();
+	List<Integer> listLabel = new ArrayList<>();
 
 	public Tracker(float _dt, float _Accel_noise_mag, double _dist_thres,
 			int _maximum_allowed_skipped_frames, int _max_trace_length) {
@@ -150,6 +153,9 @@ public class Tracker extends JTracker {
 				Imgproc.putText(imag, tracks.get(j).track_id + "", pt2,
 						2 * Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255,
 								255), 1);
+				
+				this.listLabel.add(tracks.get(j).track_id);
+				
 				if (tracks.get(j).history.size() < 20)
 					tracks.get(j).history.add(pt1);
 				else {
@@ -193,5 +199,9 @@ public class Tracker extends JTracker {
 			// Imgproc.putText(imag, "K",tracks.get(i).prediction,
 			// Core.FONT_HERSHEY_PLAIN, 2, new Scalar(255, 255, 255), 1);
 		}
+	}
+	
+	public List<Integer> getListLabel(){
+		return this.listLabel;
 	}
 }

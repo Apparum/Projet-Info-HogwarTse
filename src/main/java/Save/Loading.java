@@ -26,7 +26,7 @@ public class Loading {
 	 */
 	public static List<List<Rectangle>> charger(final String nom, final String methode) {
 		final Path fichier;
-		switch(methode){
+		switch (methode) {
 		case "Kalman":
 			fichier = Paths.get("K-" + nom + ".txt");
 			break;

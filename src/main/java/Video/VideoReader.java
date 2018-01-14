@@ -42,11 +42,11 @@ public class VideoReader {
 	private final List<Mat> framesClone = new ArrayList<>();
 	private List<List<Rectangle>> rects = new ArrayList<>();
 	private List<Integer> nbPerFrame = new ArrayList<>();
-	private final List<List<Integer>> listLabel = new ArrayList<>();
+	private List<List<Integer>> listLabel = new ArrayList<>();
 
 	/**
 	 * 
-	 * Constructeur du lecture de la vidéo.
+	 * Constructeur de lecture de la vidéo.
 	 *
 	 * @param path
 	 * 
@@ -73,6 +73,7 @@ public class VideoReader {
 			this.affichageMat();
 		} else {
 			this.initKalman();
+			Saving.infoText(this.nomVideo, this.rects, this.listLabel);
 		}
 		System.out.println("Loading completed !");
 	}
@@ -122,19 +123,44 @@ public class VideoReader {
 	 * supression du fond et avec la méthode d'interpolation du filtre de Kalman
 	 */
 	private void initKalman() {
+		boolean dejaVu = Files.exists(Paths.get("K-" + this.nomVideo + ".txt"));
 		MainKalman kalman = new MainKalman();
-		try {
-			kalman.process2(this.video);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!dejaVu) {
+			try {
+				kalman.process(this.video);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.frames = kalman.getListMat();
+			this.nbPerFrame = kalman.getListNbPeople();
+			this.rects = kalman.getListRects();
+			this.listLabel = kalman.getListLabel();
+			Saving.sauvegarder(this.nomVideo, this.rects, "Kalman");
+		} else {
+			final Mat frame = new Mat();
+			final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
+			int currentFrame = 0;
+			while (this.video.read(frame)) {
+				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
+				// On ne fait la détection que si on n'a pas le fichier correspondant.
+				this.framesClone.add(frame.clone());
+				currentFrame += 1;
+			}
+			System.out.println("The video was already in memory");
+			this.rects = Loading.charger(this.nomVideo, "Kalman");
+			for (final List<Rectangle> image : this.rects) {
+				this.nbPerFrame.add(image.size());
+			}
+			this.labellisation();
+			this.affichageMat();
+			System.out.println("OK");
 		}
-		this.frames = kalman.getListMat();
-		this.nbPerFrame = kalman.getListNbPeople();
 	}
 
 	private void affichageMat() {
 		int nbFrame = 0, compteurRect = 0;
+		System.out.println(this.rects);
 		for (final Mat matFrame : this.framesClone) {
 			if (this.hogVisibility) {
 				for (final Rectangle rectangle : this.rects.get(nbFrame)) {
