@@ -25,7 +25,7 @@ public class Saving {
 	 */
 	public static void sauvegarder(final String nom, final List<List<Rectangle>> video) {
 		String line = "";
-		final Path fichier = Paths.get(nom + ".txt");
+		final Path fichier = Paths.get("Saves/" + nom + ".txt");
 		final Charset charset = Charset.forName("US-ASCII");
 		if (!Files.exists(fichier)) {
 			try {
