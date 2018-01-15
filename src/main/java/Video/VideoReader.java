@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +75,6 @@ public class VideoReader {
 			this.initKalman();
 			Saving.infoText(this.nomVideo, this.rects, this.listLabel);
 		}
-		System.out.println("Loading completed !");
 	}
 
 	/*
@@ -88,8 +86,7 @@ public class VideoReader {
 		final double size = this.video.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int currentFrame = 0;
 
-		Path fichier = Paths.get("Saves/" + this.nomVideo + ".txt");
-		boolean dejaVu = Files.exists(fichier);
+		boolean dejaVu = Files.exists(Paths.get("Saves/H-" + this.nomVideo + ".txt"));
 
 		while (this.video.read(frame)) {
 			System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
@@ -126,7 +123,7 @@ public class VideoReader {
 	 * supression du fond et avec la méthode d'interpolation du filtre de Kalman
 	 */
 	private void initKalman() {
-		boolean dejaVu = Files.exists(Paths.get("K-" + this.nomVideo + ".txt"));
+		boolean dejaVu = Files.exists(Paths.get("Saves/K-" + this.nomVideo + ".txt"));
 		MainKalman kalman = new MainKalman();
 		if (!dejaVu) {
 			try {
@@ -146,7 +143,6 @@ public class VideoReader {
 			int currentFrame = 0;
 			while (this.video.read(frame)) {
 				System.out.println("Loading : " + (int) ((currentFrame / size) * 100) + "%");
-				// On ne fait la détection que si on n'a pas le fichier correspondant.
 				this.framesClone.add(frame.clone());
 				currentFrame += 1;
 			}
@@ -163,22 +159,38 @@ public class VideoReader {
 
 	private void affichageMat() {
 		int nbFrame = 0, compteurRect = 0;
-		System.out.println(this.rects);
-		for (final Mat matFrame : this.framesClone) {
-			if (this.hogVisibility) {
-				for (final Rectangle rectangle : this.rects.get(nbFrame)) {
-					Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
-							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor,
-							1);
-					Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
-							new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
-							Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
-					compteurRect++;
-				}
-				compteurRect = 0;
+
+		List<List<Rectangle>> listListRects = new ArrayList<>();
+		List<List<Integer>> listListLabel = new ArrayList<>();
+		if (this.rects.size() < this.framesClone.size()) {
+			List<Rectangle> listRects = new ArrayList<>();
+			List<Integer> listLabel = new ArrayList<>();
+			for (int k = 0; k < this.framesClone.size() - this.rects.size(); k++) {
+				listListRects.add(listRects);
+				listListLabel.add(listLabel);
 			}
+			for (int k = 0; k < this.rects.size(); k++) {
+				listListRects.add(this.rects.get(k));
+				listListLabel.add(this.listLabel.get(k));
+			}
+			this.listLabel = listListLabel;
+			this.rects = listListRects;
+		}
+
+		for (final Mat matFrame : this.framesClone) {
+			// if (this.hogVisibility) {
+			for (final Rectangle rectangle : this.rects.get(nbFrame)) {
+				Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
+						new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor, 2);
+				Imgproc.putText(matFrame, "" + this.listLabel.get(nbFrame).get(compteurRect),
+						new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height),
+						Core.FONT_HERSHEY_PLAIN, 1, new Scalar(255, 255, 255), 1);
+				compteurRect++;
+			}
+			compteurRect = 0;
+			// }
 			this.frames.add(matFrame.clone());
-			nbFrame += 1;
+			nbFrame++;
 		}
 	}
 

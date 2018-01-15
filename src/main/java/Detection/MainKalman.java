@@ -52,8 +52,7 @@ public class MainKalman {
 		while (true) {
 			if (!camera.read(frame))
 				break;
-			Imgproc.resize(frame, frame, new Size(CONFIG.FRAME_WIDTH, CONFIG.FRAME_HEIGHT), 0., 0.,
-					Imgproc.INTER_LINEAR);
+
 			imag = frame.clone();
 			orgin = frame.clone();
 			kalman = frame.clone();
@@ -93,7 +92,6 @@ public class MainKalman {
 						int ObjectCenterY = (int) ((obj.tl().y + obj.br().y) / 2);
 
 						Point pt = new Point(ObjectCenterX, ObjectCenterY);
-						
 						rectFrame.add(new Rectangle(obj.x, obj.y, obj.width, obj.height));
 
 						Imgproc.rectangle(imag, obj.br(), obj.tl(), new Scalar(0, 255, 0), 2);
@@ -105,6 +103,11 @@ public class MainKalman {
 					this.listNbPeople.add(compteur);
 				} else if (array.size() == 0) {
 					tracker.updateKalman(imag, detections);
+					List<Integer> listLabel = new ArrayList<>();
+					this.listLabel.add(listLabel);
+					List<Rectangle> listRect = new ArrayList<>();
+					this.listRects.add(listRect);
+					this.listNbPeople.add(0);
 				}
 
 				for (int k = 0; k < tracker.tracks.size(); k++) {
@@ -173,12 +176,12 @@ public class MainKalman {
 	public List<Integer> getListNbPeople() {
 		return this.listNbPeople;
 	}
-	
-	public List<List<Rectangle>> getListRects(){
+
+	public List<List<Rectangle>> getListRects() {
 		return this.listRects;
 	}
-	
-	public List<List<Integer>> getListLabel(){
+
+	public List<List<Integer>> getListLabel() {
 		return this.listLabel;
 	}
 }
