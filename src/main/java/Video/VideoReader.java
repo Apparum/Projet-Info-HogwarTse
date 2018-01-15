@@ -36,7 +36,6 @@ public class VideoReader {
 
 	private final Scalar rectColor = new Scalar(0, 255, 0);
 	private int frameoff = 1;
-	private boolean hogVisibility = true;
 	private boolean hogOrKalman = true; // 1 = hog, 0 = kalman
 	private List<Mat> frames = new ArrayList<>();
 	private final List<Mat> framesClone = new ArrayList<>();
@@ -129,7 +128,6 @@ public class VideoReader {
 			try {
 				kalman.process(this.video);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			this.frames = kalman.getListMat();
@@ -160,25 +158,7 @@ public class VideoReader {
 	private void affichageMat() {
 		int nbFrame = 0, compteurRect = 0;
 
-		List<List<Rectangle>> listListRects = new ArrayList<>();
-		List<List<Integer>> listListLabel = new ArrayList<>();
-		if (this.rects.size() < this.framesClone.size()) {
-			List<Rectangle> listRects = new ArrayList<>();
-			List<Integer> listLabel = new ArrayList<>();
-			for (int k = 0; k < this.framesClone.size() - this.rects.size(); k++) {
-				listListRects.add(listRects);
-				listListLabel.add(listLabel);
-			}
-			for (int k = 0; k < this.rects.size(); k++) {
-				listListRects.add(this.rects.get(k));
-				listListLabel.add(this.listLabel.get(k));
-			}
-			this.listLabel = listListLabel;
-			this.rects = listListRects;
-		}
-
 		for (final Mat matFrame : this.framesClone) {
-			// if (this.hogVisibility) {
 			for (final Rectangle rectangle : this.rects.get(nbFrame)) {
 				Imgproc.rectangle(matFrame, new Point(rectangle.x, rectangle.y),
 						new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height), this.rectColor, 2);
@@ -188,7 +168,6 @@ public class VideoReader {
 				compteurRect++;
 			}
 			compteurRect = 0;
-			// }
 			this.frames.add(matFrame.clone());
 			nbFrame++;
 		}
@@ -225,7 +204,6 @@ public class VideoReader {
 	}
 
 	public void setHogVisible(final boolean hogVisible) {
-		this.hogVisibility = hogVisible;
 	}
 
 	public void setHogOrKalman(boolean hogOrKalman) {

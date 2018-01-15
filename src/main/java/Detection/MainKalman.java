@@ -59,6 +59,11 @@ public class MainKalman {
 			if (i == 0) {
 				diffFrame = new Mat(outbox.size(), CvType.CV_8UC1);
 				diffFrame = outbox.clone();
+				List<Integer> listLabel = new ArrayList<>();
+				this.listLabel.add(listLabel);
+				List<Rectangle> listRect = new ArrayList<>();
+				this.listRects.add(listRect);
+				this.listNbPeople.add(0);
 			}
 
 			if (i == 1) {
