@@ -17,6 +17,11 @@ import org.opencv.objdetect.HOGDescriptor;
 
 public class HOGDetection {
 
+	/**
+	 * retourne une liste de rectangles correspondant au objets detectés sur l'image
+	 * @param frame : image que l'on veut traiter
+	 * @return
+	 */
 	public List<Rectangle> detect(Mat frame) {
 		HOGDescriptor hog = new HOGDescriptor(new Size(32, 64), new Size(8, 8), new Size(4, 4), new Size(4, 4), 9, 1,
 				-1, 1, 0.2, true, 16, false);
@@ -36,7 +41,11 @@ public class HOGDetection {
 		}
 		return rectList;
 	}
-
+/**
+ * Convertie une BufferedImage en Mat
+ * @param bi : BufferedImage à convertir
+ * @return
+ */
 	public static Mat bufferedImageToMat(BufferedImage bi) {
 		Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
 		byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();

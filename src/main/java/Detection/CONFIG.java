@@ -5,13 +5,6 @@ import java.awt.Toolkit;
 import org.opencv.core.Scalar;
 
 public class CONFIG {
-	// static String filename =
-	// "H:/VIDEO/Footage/Crowd_PETS09/S2/L2/Time_14-55/View_001/frame_%04d.jpg");
-	// static String filename = "H:/VIDEO/Footage/Project Final/768x576.avi";
-	// static String filename = "H:/VIDEO/Footage/Project Final/MatchSoccer.wmv";
-	// static String filename = "H:/VIDEO/Footage/Project Final/SingleTracking.mp4";
-	// static String filename = "H:/VIDEO/Footage/Project Final/FroggerHighway.mp4";
-	// static String filename = "H:/VIDEO/Footage/Project Final/street.mov";
 	public static String filename = "atrium.avi";
 	//public static String filename = "DSC_0465.avi";
 

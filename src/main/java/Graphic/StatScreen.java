@@ -231,7 +231,7 @@ public class StatScreen {
 		});
 	}
 
-	// Getters
+	// SETTERS
 
 	public boolean isGoToMenu() {
 		return this.goToMenu;

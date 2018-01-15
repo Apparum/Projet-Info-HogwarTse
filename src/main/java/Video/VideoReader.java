@@ -119,7 +119,7 @@ public class VideoReader {
 
 	/*
 	 * Fonction qui contient le code de traitement de la vidéo avec la méthode de
-	 * supression du fond et avec la méthode d'interpolation du filtre de Kalman
+	 * supression du fond et avec la méthode d'interpolation grâce au filtre de Kalman
 	 */
 	private void initKalman() {
 		boolean dejaVu = Files.exists(Paths.get("Saves/K-" + this.nomVideo + ".txt"));
@@ -155,6 +155,9 @@ public class VideoReader {
 		}
 	}
 
+	/*
+	 * Permet de projeter sur la vidéo les rectangles de detections calculés
+	 */
 	private void affichageMat() {
 		int nbFrame = 0, compteurRect = 0;
 

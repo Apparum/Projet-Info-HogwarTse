@@ -16,6 +16,14 @@ public class Tracker extends JTracker {
 	Vector<Integer> assignment = new Vector<>();
 	List<Integer> listLabel = new ArrayList<>();
 
+	/**
+	 * Initialisation d'un tracker
+	 * @param _dt
+	 * @param _Accel_noise_mag
+	 * @param _dist_thres
+	 * @param _maximum_allowed_skipped_frames
+	 * @param _max_trace_length
+	 */
 	public Tracker(float _dt, float _Accel_noise_mag, double _dist_thres,
 			int _maximum_allowed_skipped_frames, int _max_trace_length) {
 		tracks = new Vector<>();
@@ -27,17 +35,21 @@ public class Tracker extends JTracker {
 		track_removed = 0;
 	}
 	
+	/**
+	 * Le couleurs utilisées pour le tracking
+	 */
 	static Scalar Colors[] = { new Scalar(255, 0, 0), new Scalar(0, 255, 0),
 		new Scalar(0, 0, 255), new Scalar(255, 255, 0),
 		new Scalar(0, 255, 255), new Scalar(255, 0, 255),
 		new Scalar(255, 127, 255), new Scalar(127, 0, 255),
 		new Scalar(127, 0, 127) };
 
-	double euclideanDist(Point p, Point q) {
-		Point diff = new Point(p.x - q.x, p.y - q.y);
-		return Math.sqrt(diff.x * diff.x + diff.y * diff.y);
-	}
-
+/**
+ * Actualise les valeurs du filtres de Kalman et fais une labellisation grâce à l'algorithme hongrois
+ * @param rectArray : vecteur des rectangles des objets detectés
+ * @param detections : vecteur des centres des objets detectés
+ * @param imag : image à traiter
+ */
 	public void update(Vector<Rect> rectArray, Vector<Point> detections, Mat imag) {			
 		if (tracks.size() == 0) {
 			// If no tracks yet
@@ -166,6 +178,11 @@ public class Tracker extends JTracker {
 		}
 	}
 	
+	/**
+	 * Actualise les valeurs du filtre de Kalman
+	 * @param imag : Image à traiter
+	 * @param detections : vecteur contenant les centres des objets detectés
+	 */
 	public void updateKalman(Mat imag, Vector<Point> detections) {
 		// Update Kalman Filters state
 		if(detections.size()==0)
@@ -201,7 +218,22 @@ public class Tracker extends JTracker {
 		}
 	}
 	
+	// GETTERS
+	
 	public List<Integer> getListLabel(){
 		return this.listLabel;
+	}
+	
+	// Méthodes
+	
+	/**
+	 * Détermine la distance euclidienne entre deux points
+	 * @param p
+	 * @param q
+	 * @return
+	 */
+	double euclideanDist(Point p, Point q) {
+		Point diff = new Point(p.x - q.x, p.y - q.y);
+		return Math.sqrt(diff.x * diff.x + diff.y * diff.y);
 	}
 }

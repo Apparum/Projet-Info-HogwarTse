@@ -35,6 +35,10 @@ public class MainKalman {
 	private List<List<Rectangle>> listRects = new ArrayList<>();
 	private List<List<Integer>> listLabel = new ArrayList<>();
 
+	/*
+	 * Coeur du traitement de la vidéo en utilisant une soustraction de fond pour le detection,
+	 * un filtre de Kalman pour l'interpollation et l'algorithme hongrois pour la labellisation
+	 */
 	public void process(VideoCapture camera) throws InterruptedException {
 
 		Mat frame = new Mat();
@@ -42,7 +46,6 @@ public class MainKalman {
 		Mat diffFrame = null;
 		Vector<Rect> array = new Vector<Rect>();
 
-		// On initialise le background substractor !
 		BackgroundSubtractorMOG2 mBGSub = Video.createBackgroundSubtractorMOG2();
 
 		tracker = new Tracker((float) CONFIG._dt, (float) CONFIG._Accel_noise_mag, CONFIG._dist_thres,
@@ -52,7 +55,6 @@ public class MainKalman {
 		while (true) {
 			if (!camera.read(frame))
 				break;
-
 			imag = frame.clone();
 			orgin = frame.clone();
 			kalman = frame.clone();
@@ -65,7 +67,6 @@ public class MainKalman {
 				this.listRects.add(listRect);
 				this.listNbPeople.add(0);
 			}
-
 			if (i == 1) {
 				diffFrame = new Mat(frame.size(), CvType.CV_8UC1);
 
@@ -131,7 +132,14 @@ public class MainKalman {
 		}
 	}
 
-	// background substractionMOG2
+	/**
+	 * Permet de detecter les personnes par soustraction du fond de la vidéo et segmentation
+	 * @param capture : flux vidéo que l'on traite
+	 * @param mRgba : Mat de l'image que l'on veut traiter
+	 * @param mFGMask : Mat de résultat de la segmentation
+	 * @param mBGSub : Fond extrait de la vidéo grâce à la méthode MOG2
+	 * 		
+	 */
 	protected static void processFrame(VideoCapture capture, Mat mRgba, Mat mFGMask, BackgroundSubtractorMOG2 mBGSub) {
 		// GREY_FRAME also works and exhibits better performance
 		mBGSub.apply(mRgba, mFGMask, CONFIG.learningRate);
@@ -148,7 +156,11 @@ public class MainKalman {
 		Imgproc.morphologyEx(mFGMask, mFGMask, Imgproc.MORPH_OPEN, openElem);
 		Imgproc.morphologyEx(mFGMask, mFGMask, Imgproc.MORPH_CLOSE, closeElem);
 	}
-
+	
+	/**
+	 * Detecte les contours sur une image binaire
+	 * @param outmat : Mat d'une image binaire
+	 */
 	public static Vector<Rect> detectionContours(Mat outmat) {
 		Mat v = new Mat();
 		Mat vv = outmat.clone();
