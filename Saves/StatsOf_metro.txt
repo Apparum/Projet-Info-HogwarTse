@@ -11,8 +11,8 @@ Frame number 2
 	Person number 1 detected at (160.0,132.5)
 	Person number 4 detected at (301.0,107.0)
 Frame number 3
-	Person number 0 detected at (66.0,165.5)
 	Person number 3 detected at (191.0,99.5)
+	Person number 0 detected at (66.0,165.5)
 	Person number 1 detected at (157.5,133.0)
 Frame number 4
 	Person number 0 detected at (63.5,165.5)
@@ -47,8 +47,8 @@ Frame number 10
 Frame number 11
 	Person number 1 detected at (144.0,133.5)
 Frame number 12
-	Person number 1 detected at (143.0,133.0)
 	Person number 8 detected at (175.0,99.0)
+	Person number 1 detected at (143.0,133.0)
 	Person number 9 detected at (42.0,119.0)
 Frame number 13
 	Person number 1 detected at (139.0,132.0)
@@ -120,9 +120,9 @@ Frame number 31
 	Person number 16 detected at (104.5,133.0)
 Frame number 32
 	Person number 16 detected at (105.0,156.0)
-	Person number 12 detected at (134.5,94.0)
 	Person number 12 detected at (158.5,134.0)
 	Person number 15 detected at (14.5,147.0)
+	Person number 12 detected at (134.5,94.0)
 	Person number 15 detected at (15.0,172.5)
 	Person number 17 detected at (74.0,115.0)
 Frame number 33
@@ -333,9 +333,9 @@ Frame number 88
 	Person number 43 detected at (123.5,97.0)
 	Person number 42 detected at (167.5,115.0)
 Frame number 89
-	Person number 42 detected at (169.0,116.5)
 	Person number 43 detected at (121.5,94.0)
 	Person number 44 detected at (193.0,146.0)
+	Person number 42 detected at (169.0,116.5)
 Frame number 90
 	Person number 44 detected at (190.0,147.0)
 	Person number 43 detected at (119.0,88.0)
@@ -415,9 +415,9 @@ Frame number 110
 	Person number 49 detected at (206.0,115.0)
 Frame number 111
 	Person number 45 detected at (77.0,104.5)
-	Person number 47 detected at (148.5,147.0)
 	Person number 49 detected at (208.0,115.0)
 	Person number 48 detected at (284.0,117.5)
+	Person number 47 detected at (148.5,147.0)
 Frame number 112
 	Person number 47 detected at (147.0,145.5)
 	Person number 45 detected at (74.5,102.0)
